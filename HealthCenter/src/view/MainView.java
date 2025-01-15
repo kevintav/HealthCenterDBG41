@@ -10,43 +10,44 @@ public class MainView {
     private Controller controller;
     private DoctorView docView;
 
-    public MainView(Controller controller){
-        this.controller=controller;
+    public MainView(Controller controller) {
+        this.controller = controller;
         System.out.println("test");
     }
 
-    public void showMainMenu(){
+    public void showMainMenu() {
         System.out.println("Välj inloggning:");
         System.out.println("....................");
         System.out.println("1. Patient");
         System.out.println("2. Läkare");
         System.out.println("3. Administratör");
         System.out.println("9. Avsluta");
-        controller.select(handleSelection(1,9));
+        controller.select(handleSelection(1, 9));
     }
 
-    public int handleSelection(int min, int max){
+    public int handleSelection(int min, int max) {
         Scanner scan = new Scanner(System.in);
         int selection = scan.nextInt();
 
-        if(selection<min || selection>max ){
+        if (selection < min || selection > max) {
             System.out.println("felaktigt menyval");
             return -1;
         }
-        return selection;}
+        return selection;
+    }
 
-    public void showMessage(String message){
+    public void showMessage(String message) {
         System.out.println(message);
     }
 
     public void setView(int index) {
-        switch (index){
+        switch (index) {
             case 1:
                 System.out.println(PatientView.showMenu());
                 break;
             case 2:
-                String[] doctorLogin=loginView(2);
-                if(controller.checkDetails(doctorLogin)){
+                String[] doctorLogin = loginView(2);
+                if (controller.checkDetails(doctorLogin)) {
                     System.out.println(DoctorView.showMenu());
                     break;
                 } else {
@@ -54,12 +55,12 @@ public class MainView {
                 }
                 break;
             case 3:
-                String[] adminLogin=loginView(2);
-                if(controller.checkDetails(adminLogin)){
+                String[] adminLogin = loginView(2);
+                if (controller.checkDetails(adminLogin)) {
                     System.out.println(AdminView.showMenu());
                     break;
                 } else {
-                    System.out.println("felaktigt inloggsförsök");
+                    System.out.println("felaktigt inloggningsförsök");
                 }
                 break;
             case 9:
