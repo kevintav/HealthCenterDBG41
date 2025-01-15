@@ -3,8 +3,6 @@ package controller;
 import model.DBhandler;
 import view.MainView;
 
-import java.util.Arrays;
-
 public class Controller {
     private MainView mainView;
     private int selectedIndex;
@@ -12,10 +10,10 @@ public class Controller {
 
     public Controller() {
         this.mainView = new MainView(this);
-        mainView.showMainMenu();
         this.database=new DBhandler();
-    }
 
+        mainView.showMainMenu();
+    }
 
     public void select(int i) {
         this.selectedIndex=i;
@@ -23,14 +21,12 @@ public class Controller {
     }
 
     public void showMenu(int selectedIndex){
-
         switch (selectedIndex){
             case 1:
                 mainView.setView(1); //PATIENT
-
                 break;
             case 2:
-                mainView.setView(2);    //LÄKARE
+                mainView.setView(2); //LÄKARE
                 break;
             case 3:
                 mainView.setView(3); //ADMIN
@@ -49,12 +45,9 @@ public class Controller {
         }
     }
 
-    public boolean enterDetails(String[] details) {
+    public boolean checkDetails(String[] details) {
         //SKICKA TILL DBHANDLER FÖR QUERY
-       // boolean login_ok =database.checkDetails(user,password);
-        boolean loginOK = false;
-        if(details[0].equals("username") || details[1].equals("password")){
-            loginOK=true;
-        }
-    return loginOK;}
+        //boolean login_ok =database.checkDetails(user,password);
+        return details[0].equals("username") || details[1].equals("password");
+    }
 }

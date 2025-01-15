@@ -6,6 +6,7 @@ public class DoctorView {
     public DoctorView(MainView mainView){
         this.mainView=mainView;
     }
+
     public static String showMenu(){
 
         String menu1= "1. Availability";

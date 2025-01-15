@@ -2,10 +2,8 @@ package view;
 
 import controller.Controller;
 
-import javax.print.Doc;
 import javax.swing.*;
 import java.awt.*;
-import java.sql.SQLOutput;
 import java.util.Scanner;
 
 public class MainView {
@@ -29,7 +27,7 @@ public class MainView {
 
     public int handleSelection(int min, int max){
         Scanner scan = new Scanner(System.in);
-        int selection =scan.nextInt();
+        int selection = scan.nextInt();
 
         if(selection<min || selection>max ){
             System.out.println("felaktigt menyval");
@@ -49,29 +47,32 @@ public class MainView {
         }
 
         switch (index){
-            case 1: System.out.println(PatientView.showMenu()); break;
-            case 2: String[] doctorLogin=loginView(2);
-                if(controller.enterDetails(doctorLogin)){
-                    System.out.println(DoctorView.showMenu());  break;
+            case 1:
+                System.out.println(PatientView.showMenu());
+                break;
+            case 2:
+                String[] doctorLogin=loginView(2);
+                if(controller.checkDetails(doctorLogin)){
+                    System.out.println(DoctorView.showMenu());
+                    break;
                 } else {
                     System.out.println("felaktigt inloggsförsök");
                 }
+                break;
             case 3:
                 String[] adminLogin=loginView(2);
-                if(controller.enterDetails(adminLogin)){
-                    System.out.println(AdminView.showMenu());  break;
+                if(controller.checkDetails(adminLogin)){
+                    System.out.println(AdminView.showMenu());
+                    break;
                 } else {
                     System.out.println("felaktigt inloggsförsök");
                 }
-
-            case 5: break;
+                break;
             default:
-                System.out.println("NEJ");
-
+                System.out.println("Fel input");
         }
-
-
     }
+
     public String[] loginView(int type) {
         JPanel panel = new JPanel();
         JLabel userLabel = new JLabel("Ange användarnamn:");
