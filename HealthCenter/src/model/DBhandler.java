@@ -1,18 +1,20 @@
 package model;
 
-import java.time.LocalDate;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class DBhandler {
+    private static final String URL = "jdbc:postgresql://localhost:5432/ap2379";
+    private static final String USER = "ap2379";
+    private static final String PASSWORD = "iwqfod4v";
 
-    private int nbrOfPatients;
-
-    public DBhandler(){
-
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
     public void addPatient(Patient newPatient){
         //QUERY FÖR ATT LÄGGA TILL PATIENT I PATIENT-TABLE
-        nbrOfPatients++; //för programmets skull?
     }
 
     public void displayAllPatients(){
