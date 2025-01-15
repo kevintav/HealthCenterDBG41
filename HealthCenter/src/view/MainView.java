@@ -33,7 +33,6 @@ public class MainView {
             System.out.println("felaktigt menyval");
             return -1;
         }
-
         return selection;}
 
     public void showMessage(String message){
@@ -41,11 +40,6 @@ public class MainView {
     }
 
     public void setView(int index) {
-        if(index==9) {
-            System.out.println("Avslutar");
-            System.exit(0);
-        }
-
         switch (index){
             case 1:
                 System.out.println(PatientView.showMenu());
@@ -68,6 +62,9 @@ public class MainView {
                     System.out.println("felaktigt inloggsförsök");
                 }
                 break;
+            case 9:
+                System.out.println("Avslutar");
+                System.exit(0);
             default:
                 System.out.println("Fel input");
         }
