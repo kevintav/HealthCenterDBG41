@@ -7,7 +7,7 @@ import java.awt.*;
 import java.util.Scanner;
 
 public class MainView {
-    private Controller controller;
+    private final Controller controller;
     private DoctorView docView;
 
     public MainView(Controller controller) {
