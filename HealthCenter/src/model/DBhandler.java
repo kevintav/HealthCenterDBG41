@@ -9,13 +9,19 @@ public class DBhandler {
     private static final String PASSWORD = "mm96dq7m";
     private LocalDate registryDate=LocalDate.now();
 
+
+    //todo
+    // patient: [medicalNbr (PK), f_name, l_name, gender, tel_nr, registryDate]
+    // doctor: [id(PK), name]
+    // tendsto: [medicalNbr (FK till patient), doctor(FK till doctor)]
+
     public static Connection getConnection() throws SQLException {
 
         return DriverManager.getConnection(URL, USER, PASSWORD);
 
     }
 
-    public void addPatient(Patient newPatient) {
+    public void addPatient(Patient newPatient) { //BORDE KANSKE TA IN VÄRDENA ISTÄLLET FÖR ATT DET SKAPAS EN PATIENTKLASS?
         String sql = "INSERT INTO patient (medicalNbr,f_name, l_name, gender, tel_nr,registryDate) VALUES (?, ?, ?,?,?,?)";
 
         try (Connection connection = getConnection();
@@ -39,17 +45,17 @@ public class DBhandler {
 
     public void displayAllPatients() {
 
-        String sql = "SELECT * FROM patient";
+        String sql = "SELECT * FROM patient ORDER BY medicalnbr ASC";
 
         try (Connection connection = getConnection();
              Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-
-                System.out.println("Name: " + rs.getString("f_name"));
                 System.out.println("MedicalNbr: " + rs.getInt("medicalNbr"));
+                System.out.println("Name: " + rs.getString("f_name")+ " "+ rs.getString("l_name") );
                 System.out.println("tel: " + rs.getString("tel_nr"));
+                System.out.println("address: " + rs.getString("address"));
                 System.out.println("---------------");
             }
 

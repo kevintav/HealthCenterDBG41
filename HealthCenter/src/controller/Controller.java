@@ -34,12 +34,8 @@ public class Controller {
                 mainView.setView(3); //ADMIN
                 break;
             case 4:
-                Patient newPatient = new Patient(123, "Stefan", "Flöjt", "M", "Stefanvägen 3", 0351, 1230 );
-                //database.addPatient(newPatient);
-
-                // Testa att visa alla patienter
                 database.displayAllPatients();
-                //mainView.setView(4);
+                //VISAR DATABASEN MED ALLA PATIENTS
                 break;
             case 5:
                 mainView.setView(5);
