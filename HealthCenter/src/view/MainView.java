@@ -21,6 +21,7 @@ public class MainView {
         System.out.println("1. Patient");
         System.out.println("2. Läkare");
         System.out.println("3. Administratör");
+        System.out.println("4. visa alla patienter (test), tar från databasen");
         System.out.println("9. Avsluta");
         controller.select(handleSelection(1, 9));
     }

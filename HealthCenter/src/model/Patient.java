@@ -1,7 +1,6 @@
 package model;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class Patient {
     private int medicalNbr;
@@ -24,8 +23,8 @@ public class Patient {
         this.registryDate=LocalDate.now();
     }
 
-    public LocalDate getRegistryDate() {
-        return registryDate;
+    public String getRegistryDate() {
+        return String.valueOf(registryDate);
     }
 
     public int getMedicalNbr() {

@@ -1,25 +1,63 @@
 package model;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDate;
 
 public class DBhandler {
-    private static final String URL = "jdbc:postgresql://localhost:5432/ap2379";
-    private static final String USER = "ap2379";
-    private static final String PASSWORD = "iwqfod4v";
+    private static final String URL = "jdbc:postgresql://pgserver.mau.se/";
+    private static final String USER = "am2596";
+    private static final String PASSWORD = "mm96dq7m";
+    private LocalDate registryDate=LocalDate.now();
 
     public static Connection getConnection() throws SQLException {
+
         return DriverManager.getConnection(URL, USER, PASSWORD);
+
     }
 
-    public void addPatient(Patient newPatient){
-        //QUERY FÖR ATT LÄGGA TILL PATIENT I PATIENT-TABLE
+    public void addPatient(Patient newPatient) {
+        String sql = "INSERT INTO patient (medicalNbr,f_name, l_name, gender, tel_nr,registryDate) VALUES (?, ?, ?,?,?,?)";
+
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setInt(1, newPatient.getMedicalNbr());
+            stmt.setString(2, newPatient.getF_name());
+            stmt.setString(3, newPatient.getL_name());
+            stmt.setString(4, newPatient.getGender());
+            stmt.setInt(5,newPatient.getTel_nr());
+            stmt.setDate(6, Date.valueOf(registryDate));
+
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println(rowsAffected + " rows added.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void displayAllPatients(){
-        //QUERY FÖR ATT VISA ALLA PATIENTER
+
+    public void displayAllPatients() {
+
+        String sql = "SELECT * FROM patient";
+
+        try (Connection connection = getConnection();
+             Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+
+                System.out.println("Name: " + rs.getString("f_name"));
+                System.out.println("MedicalNbr: " + rs.getInt("medicalNbr"));
+                System.out.println("tel: " + rs.getString("tel_nr"));
+                System.out.println("---------------");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
 
     public void displayPatient(String identifier){
         //QUERY FÖR ATT VISA EN PATIENT SOM KAN NÅS MED HJÄLP AV EN IDENTIFIER
