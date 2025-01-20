@@ -12,7 +12,7 @@ public class DBhandler {
 
     //todo
     // patient: [medicalNbr (PK), f_name, l_name, gender, tel_nr, registryDate]
-    // doctor: [id(PK), name]
+    // doctor: [id(PK), name, specialization]
     // tendsto: [medicalNbr (FK till patient), doctor(FK till doctor)]
 
     public static Connection getConnection() throws SQLException {
