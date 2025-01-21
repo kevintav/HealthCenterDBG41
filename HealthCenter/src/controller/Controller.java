@@ -1,5 +1,6 @@
 package controller;
-
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import model.DBhandler;
 import model.Patient;
 import view.MainView;
@@ -101,11 +102,36 @@ public class Controller {
 
     public void signUp() {
         // TODO: Add functionality here
-        Scanner scan = new Scanner(System.in);
-        mainView.showMessage("Enter your name");
-        String name = scan.nextLine();
-        mainView.showMessage("Enter your personal number (10 digits)");
-        String something = scan.nextLine();
+        boolean notDone = true;
+        while (notDone) {
+            Scanner scan = new Scanner(System.in);
+            mainView.showMessage("Enter your first name:");
+            String f_name = scan.nextLine();
+            mainView.showMessage("Enter your last name:");
+            String l_name = scan.nextLine();
+            mainView.showMessage("Specify gender (F/M/X):");
+            String gender = scan.nextLine();
+            mainView.showMessage("Enter your address:");
+            String address = scan.nextLine();
+            mainView.showMessage("Enter your phone number:");
+            int tel_nbr = scan.nextInt();
+            mainView.showMessage("Enter your birthdate (YYYY-MM-DD):");
+
+            String birthDateStr = scan.next(); // Läser födelsedatum som sträng
+
+            // Försök att konvertera strängen till LocalDate och fånga eventuella fel
+            LocalDate birthDate = null;
+            try {
+                birthDate = LocalDate.parse(birthDateStr);
+            } catch (DateTimeParseException e) {
+                mainView.showMessage("Invalid date format. Please use YYYY-MM-DD.");
+                continue; // Be användaren att försöka igen
+            }
+
+            // Om konverteringen lyckas, fortsätt
+            notDone = false;
+            database.addPatient(f_name, l_name, gender, address, tel_nbr, birthDate);
+        }
     }
 
     public void displayPatient(int id) {

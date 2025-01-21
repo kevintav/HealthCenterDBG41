@@ -137,4 +137,29 @@ public class DBhandler {
             e.printStackTrace();
         }
     }
+
+    public void addPatient(String fName, String lName, String gender, String address, int telNbr, LocalDate birthDate) {
+        String sql = "INSERT INTO patient (f_name, l_name, gender, address, tel_nr, birthdate, registry) VALUES (?, ?, ?,?,?,?,?)";
+
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, fName);
+            stmt.setString(2, lName);
+            stmt.setString(3, gender);
+            stmt.setString(4, address);
+            stmt.setInt(5, telNbr);
+            stmt.setDate(6, java.sql.Date.valueOf(birthDate)); // Konvertera LocalDate till sql.Date
+
+            // Lägg till registretdatum (idag)
+            String registryDate = java.time.LocalDate.now().toString();
+            stmt.setDate(7, java.sql.Date.valueOf(registryDate));
+
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println(rowsAffected + " rows added.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
