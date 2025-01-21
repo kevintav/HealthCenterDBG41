@@ -12,45 +12,26 @@ public class Controller {
     public Controller() {
         this.mainView = new MainView(this);
         this.database=new DBhandler();
-
         mainView.showMainMenu();
 
     }
 
-    public void select(int i) {
-        this.selectedIndex=i;
-        showMenu(selectedIndex);
+    public void displayAllDoctors() {
+        database.displayAllDoctors();
     }
 
-    public void showMenu(int selectedIndex){
-        switch (selectedIndex){
-            case 1:
-                mainView.setView(1); //PATIENT
-                break;
-            case 2:
-                mainView.setView(2); //LÄKARE
-                break;
-            case 3:
-                mainView.setView(3); //ADMIN
-                break;
-            case 4:
-                database.displayAllPatients();
-                //VISAR DATABASEN MED ALLA PATIENTS
-                break;
-            case 5:
-                mainView.setView(5);
-                break;
-            case 9:
-                mainView.setView(9);
-            default:
-                mainView.showMessage("felaktigt menyval");
-                mainView.showMainMenu(); // Återgå till huvudmenyn vid ogiltigt val
-        }
+    public void setSpec(int id, String spec) {
+        database.setSpec(id, spec);
     }
 
     public boolean checkDetails(String[] details) {
         //SKICKA TILL DBHANDLER FÖR QUERY
         //boolean login_ok =database.checkDetails(user,password);
-        return details[0].equals("username") || details[1].equals("password");
+       //return details[0].equals(" ") && details[1].equals(" ");
+        return true;
+    }
+
+    public void displayAllPatients() {
+        database.displayAllPatients();
     }
 }
