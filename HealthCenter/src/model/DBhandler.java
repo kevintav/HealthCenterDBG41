@@ -20,10 +20,8 @@ public class DBhandler {
     }
 
     public void addPatient(Patient newPatient) { //BORDE KANSKE TA IN VÄRDENA ISTÄLLET FÖR ATT DET SKAPAS EN PATIENTKLASS?
-
         String sql = "INSERT INTO patient (medicalNbr,f_name, l_name, gender, tel_nr,registryDate) VALUES (?, ?, ?,?,?,?)";
         // pediatrician (Pe), Oncologist (On), Proctologist (Pr), Orthopedist (Or)
-
 
         try (Connection connection = getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -97,9 +95,27 @@ public class DBhandler {
     }
 
 
-    public void displayPatient(String identifier){
-        //QUERY FÖR ATT VISA EN PATIENT SOM KAN NÅS MED HJÄLP AV EN IDENTIFIER
+    public void displayPatient(int identifier) {
+        String sql = "SELECT * FROM patient WHERE medicalNbr = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+            pstmt.setInt(1, identifier); // Binda parameter
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    System.out.println("MedicalNbr: " + rs.getInt("medicalNbr"));
+                    System.out.println("Name: " + rs.getString("f_name") + " " + rs.getString("l_name"));
+                    System.out.println("Tel: " + rs.getString("tel_nr"));
+                    System.out.println("Address: " + rs.getString("address"));
+                    System.out.println("---------------");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
 
     public boolean checkDetails(char[][] details) {
         //QUERY FÖR ATT KOLLA OM KOMBINATIONEN FINNS

@@ -10,11 +10,13 @@ public class MainView {
     private final Controller controller;
     private DoctorView docView;
     private AdminView adminView;
+    private PatientView patientView;
 
     public MainView(Controller controller) {
         this.controller = controller;
-        this.docView = new DoctorView(this);
-        this.adminView = new AdminView(this);
+        this.docView = new DoctorView(this, controller);
+        this.adminView = new AdminView(this, controller);
+        this.patientView=new PatientView(this, controller);
     }
 
     public void showMainMenu() {
@@ -25,24 +27,18 @@ public class MainView {
         System.out.println("3. Administratör");
         System.out.println("4. visa alla patienter (test), tar från databasen");
         System.out.println("9. Avsluta");
-        setView(handleSelection(1, 9));
+        setView(controller.handleSelection(1, 9));
     }
 
-    public int handleSelection(int min, int max) {
-        Scanner scan = new Scanner(System.in);
-        int selection = scan.nextInt();
 
-        if (selection < min || selection > max) {
-            System.out.println("felaktigt menyval");
-            return -1;
-        }
-        return selection;
-    }
 
     public void setView(int index) {
         switch (index) {
             case 1:
-                System.out.println(PatientView.showMenu());
+                patientView.showMenu();
+
+                controller.displayPatient(669); //hämtar specifik patient
+
                 break;
             case 2:
                 String[] doctorLogin = loginView(2);
@@ -51,7 +47,7 @@ public class MainView {
                     boolean loggedOut=false;
                     while (!loggedOut){
                         docView.showMenu();
-                        docView.select(handleSelection(1, 9));
+                        docView.select(controller.handleSelection(1, 9));
                         loggedOut= docView.isLoggedOut();
                     }
                     break;
@@ -66,7 +62,7 @@ public class MainView {
                    boolean loggedOut=false;
                     while (!loggedOut){
                         adminView.showMenu();
-                        adminView.select(handleSelection(1, 9));
+                        adminView.select(controller.handleSelection(1, 9));
                         loggedOut= adminView.isLoggedOut();
                     }
                     break;
@@ -129,11 +125,27 @@ public class MainView {
             return null; // Returnera null om användaren avbryter inloggningen.
         }
     }
-    public void displayAllDoctors(){
-        controller.displayAllDoctors();
+    public void showPatientMenu(){
+        patientView.showMenu();
     }
 
-    public void setSpec(int id, String spec) {
-        controller.setSpec(id, spec);
+    public void showDocMenu() {
+        docView.showMenu();
     }
+    public void selectDocMenu(int index){
+        docView.select(index);
+    }
+
+    public void showAdminMenu() {
+        adminView.showMenu();
+    }
+
+    public void selectAdminMenu(int index){
+        adminView.select(index);
+    }
+
+    public boolean isLoggedOut(){
+    return docView.isLoggedOut();}
+
+
 }

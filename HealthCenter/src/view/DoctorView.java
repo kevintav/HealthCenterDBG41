@@ -1,11 +1,15 @@
 package view;
 
+import controller.Controller;
+
 public class DoctorView {
     private MainView mainView;
     private boolean loggedOut=false;
+    private Controller controller;
 
-    public DoctorView(MainView mainView){
+    public DoctorView(MainView mainView, Controller controller){
         this.mainView=mainView;
+        this.controller=controller;
     }
 
     public void showMenu(){
@@ -34,7 +38,7 @@ public class DoctorView {
                 break;
             case 4:
                 System.out.println("logging out");
-                loggedOut =true;
+                controller.logOut();
                 break;
             default:
                 System.out.println("wrong");

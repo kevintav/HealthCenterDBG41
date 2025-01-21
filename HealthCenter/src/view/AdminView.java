@@ -4,9 +4,11 @@ import controller.Controller;
 public class AdminView{
     private MainView mainView;
     private boolean loggedOut=false;
+    private Controller controller;
 
-    public AdminView(MainView mainView){
+    public AdminView(MainView mainView, Controller controller){
         this.mainView = mainView;
+        this.controller = controller;
     }
 
     public void showMenu(){
@@ -52,7 +54,7 @@ public class AdminView{
     }
 
     public void setSpec(int id , String spec){
-        mainView.setSpec(id, spec);
+        controller.setSpec(id, spec);
     }
 
     public void addInfo(){
@@ -62,7 +64,7 @@ public class AdminView{
 
     }
     public void displayAllDoctors(){
-        mainView.displayAllDoctors();
+        controller.displayAllDoctors();
     }
 
 
