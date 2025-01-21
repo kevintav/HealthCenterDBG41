@@ -1,8 +1,7 @@
 package controller;
 
-import model.DBhandler;
-import model.Patient;
-import view.MainView;
+import model.*;
+import view.*;
 
 import java.util.Scanner;
 
@@ -13,9 +12,8 @@ public class Controller {
 
     public Controller() {
         this.mainView = new MainView(this);
-        this.database=new DBhandler();
+        this.database = new DBhandler();
         mainView.showMainMenu();
-
     }
 
     public void setView(int index) {
@@ -23,7 +21,6 @@ public class Controller {
             case 1:
                 mainView.showPatientMenu();
                 displayPatient(669); //hämtar specifik patient
-
                 break;
             case 2:
                 String[] doctorLogin = mainView.loginView(2);

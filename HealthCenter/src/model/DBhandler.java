@@ -10,7 +10,7 @@ public class DBhandler {
     private LocalDate registryDate=LocalDate.now();
 
 
-    //todo
+    // todo
     // patient: [medicalNbr (PK), f_name, l_name, gender, tel_nr, registryDate]
     // doctor: [id(PK), name, specialization]
     // tendsto: [medicalNbr (FK till patient), doctor(FK till doctor)]

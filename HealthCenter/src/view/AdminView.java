@@ -25,14 +25,14 @@ public class AdminView{
     public void select(int index) {
         switch (index){
             case 1:
-                addDoctor();
+                printAddDoctor();
                 break;
             case 2:
                 System.out.println("Välj en doktor:");
                 displayAllDoctors();
                 break;
             case 3:
-                deleteDoctor();
+                printDeleteDoctor();
                 break;
             case 4:
                 System.out.println("logging out");
@@ -45,11 +45,11 @@ public class AdminView{
         }
     }
 
-    private void addDoctor() {
+    private void printAddDoctor() {
         System.out.println("added doctor");
     }
 
-    public void deleteDoctor(){
+    public void printDeleteDoctor(){
         System.out.println("deleted doctor");
     }
 
