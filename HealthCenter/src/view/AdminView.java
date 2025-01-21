@@ -36,7 +36,7 @@ public class AdminView{
                 break;
             case 4:
                 System.out.println("logging out");
-                loggedOut =true;
+                controller.logOut();
                 break;
             default:
                 System.out.println("wrong");

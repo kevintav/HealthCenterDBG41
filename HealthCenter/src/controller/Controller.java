@@ -30,7 +30,7 @@ public class Controller {
                 if (checkDetails(doctorLogin)) {
                     System.out.println("inloggning lyckades");
                     loginStatus=true;
-                    while (!loginStatus){
+                    while (loginStatus){
                         mainView.showDocMenu();
                         mainView.selectDocMenu(handleSelection(1, 9));
                         mainView.isLoggedOut();
@@ -44,11 +44,11 @@ public class Controller {
                 String[] adminLogin = mainView.loginView(2);
                 if (checkDetails(adminLogin)) {
                     System.out.println("inloggning lyckades");
-                    boolean loggedOut=false;
-                    while (!loggedOut){
+                   loginStatus=true;
+                    while (loginStatus){
                         mainView.showAdminMenu();
                         mainView.selectAdminMenu(handleSelection(1, 9));
-                        loggedOut= mainView.isLoggedOut();
+                        mainView.isLoggedOut();
                     }
                     break;
                 } else {

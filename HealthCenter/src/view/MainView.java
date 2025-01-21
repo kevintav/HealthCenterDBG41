@@ -27,60 +27,9 @@ public class MainView {
         System.out.println("3. Administratör");
         System.out.println("4. visa alla patienter (test), tar från databasen");
         System.out.println("9. Avsluta");
-        setView(controller.handleSelection(1, 9));
+        controller.setView(controller.handleSelection(1, 9));
     }
 
-
-
-    public void setView(int index) {
-        switch (index) {
-            case 1:
-                patientView.showMenu();
-
-                controller.displayPatient(669); //hämtar specifik patient
-
-                break;
-            case 2:
-                String[] doctorLogin = loginView(2);
-                if (controller.checkDetails(doctorLogin)) {
-                    System.out.println("inloggning lyckades");
-                    boolean loggedOut=false;
-                    while (!loggedOut){
-                        docView.showMenu();
-                        docView.select(controller.handleSelection(1, 9));
-                        loggedOut= docView.isLoggedOut();
-                    }
-                    break;
-                } else {
-                    System.out.println("felaktigt inloggsförsök");
-                }
-                break;
-            case 3:
-                String[] adminLogin = loginView(2);
-                if (controller.checkDetails(adminLogin)) {
-                    System.out.println("inloggning lyckades");
-                   boolean loggedOut=false;
-                    while (!loggedOut){
-                        adminView.showMenu();
-                        adminView.select(controller.handleSelection(1, 9));
-                        loggedOut= adminView.isLoggedOut();
-                    }
-                    break;
-                } else {
-                    System.out.println("felaktigt inloggningsförsök");
-                }
-                break;
-            case 4:
-                controller.displayAllPatients();
-                break;
-            case 9:
-                System.out.println("Avslutar");
-                System.exit(0);
-            default:
-                System.out.println("Fel input");
-        }
-        showMainMenu();
-    }
 
     public String[] loginView(int type) {
         JPanel panel = new JPanel();
