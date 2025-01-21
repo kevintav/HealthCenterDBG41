@@ -1,71 +1,70 @@
 package view;
 import controller.Controller;
 
-public class AdminView{
+public class AdminView {
     private MainView mainView;
-    private boolean loggedOut=false;
+    private boolean loggedOut = false;
     private Controller controller;
 
-    public AdminView(MainView mainView, Controller controller){
+    public AdminView(MainView mainView, Controller controller) {
         this.mainView = mainView;
         this.controller = controller;
     }
 
-    public void showMenu(){
+    public void showMenu() {
         System.out.println("1. Add doctor");
         System.out.println("2. Set doctor specialization");
         System.out.println("3. Delete doctor from register");
         System.out.println("4. Log out");
-}
+    }
 
     public boolean isLoggedOut() {
         return loggedOut;
     }
 
     public void select(int index) {
-        switch (index){
+        switch (index) {
             case 1:
                 addDoctor();
                 break;
             case 2:
-                System.out.println("Välj en doktor:");
+                System.out.println("Select a doctor:");
                 displayAllDoctors();
                 break;
             case 3:
                 deleteDoctor();
                 break;
             case 4:
-                System.out.println("logging out");
+                System.out.println("Logging out");
                 controller.logOut();
                 break;
             default:
-                System.out.println("wrong");
+                System.out.println("Invalid selection");
                 break;
-
         }
     }
 
     private void addDoctor() {
-        System.out.println("added doctor");
+        System.out.println("Doctor added");
     }
 
-    public void deleteDoctor(){
-        System.out.println("deleted doctor");
+    public void deleteDoctor() {
+        System.out.println("Doctor deleted");
     }
 
-    public void setSpec(int id , String spec){
+    public void setSpec(int id, String spec) {
         controller.setSpec(id, spec);
     }
 
-    public void addInfo(){
-
+    public void addInfo() {
+        // Future implementation
     }
-    public void displayDoctor(int id){
 
+    public void displayDoctor(int id) {
+        // Future implementation
     }
-    public void displayAllDoctors(){
+
+    public void displayAllDoctors() {
         controller.displayAllDoctors();
     }
-
-
 }

@@ -4,7 +4,6 @@ import controller.Controller;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Scanner;
 
 public class MainView {
     private final Controller controller;
@@ -16,25 +15,24 @@ public class MainView {
         this.controller = controller;
         this.docView = new DoctorView(this, controller);
         this.adminView = new AdminView(this, controller);
-        this.patientView=new PatientView(this, controller);
+        this.patientView = new PatientView(this, controller);
     }
 
     public void showMainMenu() {
-        System.out.println("Välj inloggning:");
+        System.out.println("Select login type:");
         System.out.println("....................");
         System.out.println("1. Patient");
-        System.out.println("2. Läkare");
-        System.out.println("3. Administratör");
-        System.out.println("4. visa alla patienter (test), tar från databasen");
-        System.out.println("9. Avsluta");
+        System.out.println("2. Doctor");
+        System.out.println("3. Administrator");
+        System.out.println("4. Show all patients (test), fetch from database");
+        System.out.println("9. Exit");
         controller.setView(controller.handleSelection(1, 9));
     }
 
-
     public String[] loginView(int type) {
         JPanel panel = new JPanel();
-        JLabel userLabel = new JLabel("Ange användarnamn:");
-        JLabel passLabel = new JLabel("Ange lösenord:");
+        JLabel userLabel = new JLabel("Enter username:");
+        JLabel passLabel = new JLabel("Enter password:");
         JTextField usernameField = new JTextField(10);
         JPasswordField passwordField = new JPasswordField(10);
 
@@ -46,11 +44,11 @@ public class MainView {
 
         String title;
         if (type == 3) {
-            title = "Admin Inloggning";
+            title = "Admin Login";
         } else if (type == 2) {
-            title = "Läkare Inloggning";
+            title = "Doctor Login";
         } else {
-            title = "Okänd Inloggning";
+            title = "Unknown Login";
         }
 
         int result = JOptionPane.showConfirmDialog(
@@ -65,23 +63,29 @@ public class MainView {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
             /*
-            System.out.println("Användarnamn: " + username);
-            System.out.println("Lösenord: " + password);
+            System.out.println("Username: " + username);
+            System.out.println("Password: " + password);
             */
             return new String[]{username, password};
         } else {
-            System.out.println("Inloggning avbruten.");
-            return null; // Returnera null om användaren avbryter inloggningen.
+            System.out.println("Login canceled.");
+            return null; // Return null if the user cancels the login.
         }
     }
-    public void showPatientMenu(){
+
+    public void showPatientMenu() {
         patientView.showMenu();
+    }
+
+    public void selectPatientMenu(int index) {
+        patientView.select(index);
     }
 
     public void showDocMenu() {
         docView.showMenu();
     }
-    public void selectDocMenu(int index){
+
+    public void selectDocMenu(int index) {
         docView.select(index);
     }
 
@@ -89,12 +93,15 @@ public class MainView {
         adminView.showMenu();
     }
 
-    public void selectAdminMenu(int index){
+    public void selectAdminMenu(int index) {
         adminView.select(index);
     }
 
-    public boolean isLoggedOut(){
-    return docView.isLoggedOut();}
+    public boolean isLoggedOut() {
+        return docView.isLoggedOut();
+    }
 
-
+    public void showMessage(String message) {
+        System.out.println(message);
+    }
 }
