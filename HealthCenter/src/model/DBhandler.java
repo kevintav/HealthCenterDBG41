@@ -19,27 +19,6 @@ public class DBhandler {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    public void addPatient(Patient newPatient) { //BORDE KANSKE TA IN VÄRDENA ISTÄLLET FÖR ATT DET SKAPAS EN PATIENTKLASS?
-        String sql = "INSERT INTO patient (medicalNbr,f_name, l_name, gender, tel_nr,registryDate) VALUES (?, ?, ?,?,?,?)";
-        // pediatrician (Pe), Oncologist (On), Proctologist (Pr), Orthopedist (Or)
-
-        try (Connection connection = getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
-
-            stmt.setInt(1, newPatient.getMedicalNbr());
-            stmt.setString(2, newPatient.getF_name());
-            stmt.setString(3, newPatient.getL_name());
-            stmt.setString(4, newPatient.getGender());
-            stmt.setInt(5,newPatient.getTel_nr());
-            stmt.setDate(6, Date.valueOf(registryDate));
-
-            int rowsAffected = stmt.executeUpdate();
-            System.out.println(rowsAffected + " rows added.");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void addDoctor(int id, String fullName, String spec){
         String sql = "INSERT INTO doctor (id, fullname,spec) VALUES (?, ?, ?)";
@@ -59,7 +38,7 @@ public class DBhandler {
         }
     }
 
-    public void setSpec(int id, String spec) {
+    public void setSpecialization(int id, String spec) {
         String sql = "UPDATE doctor SET spec=? WHERE id=?;";
         try (Connection connection = getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -85,7 +64,7 @@ public class DBhandler {
             while (rs.next()) {
                 System.out.println("MedicalNbr: " + rs.getInt("medicalNbr"));
                 System.out.println("Name: " + rs.getString("f_name")+ " "+ rs.getString("l_name") );
-                System.out.println("tel: " + rs.getString("tel_nr"));
+                System.out.println("tel: 0" + rs.getString("tel_nr"));
                 System.out.println("address: " + rs.getString("address"));
                 System.out.println("---------------");
             }
@@ -106,7 +85,7 @@ public class DBhandler {
                 while (rs.next()) {
                     System.out.println("MedicalNbr: " + rs.getInt("medicalNbr"));
                     System.out.println("Name: " + rs.getString("f_name") + " " + rs.getString("l_name"));
-                    System.out.println("Tel: " + rs.getString("tel_nr"));
+                    System.out.println("Tel: 0" + rs.getString("tel_nr"));
                     System.out.println("Address: " + rs.getString("address"));
                     System.out.println("---------------");
                 }
@@ -138,7 +117,7 @@ public class DBhandler {
         }
     }
 
-    public void addPatient(String fName, String lName, String gender, String address, int telNbr, LocalDate birthDate) {
+    public void addPatient(String fName, String lName, String gender, String address, int telNbr, LocalDate birthDate, String password) {
         String sql = "INSERT INTO patient (f_name, l_name, gender, address, tel_nr, birthdate, registry) VALUES (?, ?, ?,?,?,?,?)";
 
         try (Connection connection = getConnection();
