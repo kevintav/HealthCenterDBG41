@@ -1,7 +1,8 @@
 package controller;
-
-import model.*;
-import view.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import model.DBhandler;
+import view.MainView;
 
 import java.util.Scanner;
 
@@ -20,52 +21,52 @@ public class Controller {
         switch (index) {
             case 1:
                 mainView.showPatientMenu();
-                displayPatient(669); //hämtar specifik patient
+                mainView.selectPatientMenu(handleSelection(1, 5));
                 break;
             case 2:
                 String[] doctorLogin = mainView.loginView(2);
                 if (checkDetails(doctorLogin)) {
-                    System.out.println("inloggning lyckades");
-                    loginStatus=true;
-                    while (loginStatus){
+                    System.out.println("Login successful");
+                    loginStatus = true;
+                    while (loginStatus) {
                         mainView.showDocMenu();
                         mainView.selectDocMenu(handleSelection(1, 9));
                         mainView.isLoggedOut();
                     }
                     break;
                 } else {
-                    System.out.println("felaktigt inloggsförsök");
+                    System.out.println("Invalid login attempt");
                 }
                 break;
             case 3:
-                String[] adminLogin = mainView.loginView(2);
+                String[] adminLogin = mainView.loginView(3);
                 if (checkDetails(adminLogin)) {
-                    System.out.println("inloggning lyckades");
-                   loginStatus=true;
-                    while (loginStatus){
+                    System.out.println("Login successful");
+                    loginStatus = true;
+                    while (loginStatus) {
                         mainView.showAdminMenu();
                         mainView.selectAdminMenu(handleSelection(1, 9));
                         mainView.isLoggedOut();
                     }
                     break;
                 } else {
-                    System.out.println("felaktigt inloggningsförsök");
+                    System.out.println("Invalid login attempt");
                 }
                 break;
             case 4:
                 displayAllPatients();
                 break;
             case 9:
-                System.out.println("Avslutar");
+                System.out.println("Exiting");
                 System.exit(0);
             default:
-                System.out.println("Fel input");
+                System.out.println("Invalid input");
         }
         mainView.showMainMenu();
     }
 
-    public void logOut(){
-        loginStatus=false;
+    public void logOut() {
+        loginStatus = false;
     }
 
     public int handleSelection(int min, int max) {
@@ -73,7 +74,7 @@ public class Controller {
         int selection = scan.nextInt();
 
         if (selection < min || selection > max) {
-            System.out.println("felaktigt menyval");
+            System.out.println("Invalid menu choice");
             return -1;
         }
         return selection;
@@ -84,13 +85,14 @@ public class Controller {
     }
 
     public void setSpec(int id, String spec) {
-        database.setSpec(id, spec);
+        database.setSpecialization(id, spec);
     }
 
     public boolean checkDetails(String[] details) {
-        //SKICKA TILL DBHANDLER FÖR QUERY
-        //boolean login_ok =database.checkDetails(user,password);
-       //return details[0].equals(" ") && details[1].equals(" ");
+        //TODO kontrollerar id och lösenord, men behöver fixas på något bra sätt:
+        // SEND TO DBHANDLER FOR QUERY
+        // boolean login_ok = database.checkDetails(user, password);
+        // return details[0].equals(" ") && details[1].equals(" ");
         return true;
     }
 
@@ -99,10 +101,40 @@ public class Controller {
     }
 
     public void signUp() {
+        // TODO: Add functionality here
+        boolean notDone = true;
+        while (notDone) {
+            Scanner scan = new Scanner(System.in);
+            mainView.showMessage("Enter your first name:");
+            String f_name = scan.nextLine();
+            mainView.showMessage("Enter your last name:");
+            String l_name = scan.nextLine();
+            mainView.showMessage("Specify gender (F/M/X):");
+            String gender = scan.nextLine();
+            mainView.showMessage("Enter your address:");
+            String address = scan.nextLine();
+            mainView.showMessage("Enter your phone number:");
+            int tel_nbr = scan.nextInt();
+            mainView.showMessage("Select a password:");
+            String password =scan.nextLine();
+            mainView.showMessage("Enter your birthdate (YYYY-MM-DD):");
+
+            String birthDateStr = scan.next();
+            LocalDate birthDate = null;
+            try {
+                birthDate = LocalDate.parse(birthDateStr);
+            } catch (DateTimeParseException e) {
+                mainView.showMessage("Invalid date format. Please use YYYY-MM-DD.");
+                continue;
+            }
+
+
+            notDone = false;
+            database.addPatient(f_name, l_name, gender, address, tel_nbr, birthDate, password);
+        }
     }
 
-
-    public void displayPatient(int id){
+    public void displayPatient(int id) {
         database.displayPatient(id);
     }
 }
