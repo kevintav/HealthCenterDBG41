@@ -10,7 +10,7 @@ public class DBhandler {
     private LocalDate registryDate=LocalDate.now();
 
 
-    // todo
+    //TODO
     // patient: [medicalNbr (PK), f_name, l_name, gender, tel_nr, registryDate]
     // doctor: [id(PK), name, specialization]
     // tendsto: [medicalNbr (FK till patient), doctor(FK till doctor)]
@@ -54,10 +54,9 @@ public class DBhandler {
         }
     }
 
-
-
-    public void displayAllPatients() {
+    public String[][] getAllPatients() {
         String sql = "SELECT * FROM patient ORDER BY medicalnbr ASC";
+        String[][] patientsInformation;
         try (Connection connection = getConnection();
              Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {

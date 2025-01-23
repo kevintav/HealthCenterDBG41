@@ -4,6 +4,9 @@ import controller.Controller;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.Scanner;
 
 public class MainView {
     private final Controller controller;
@@ -70,6 +73,37 @@ public class MainView {
         } else {
             System.out.println("Login canceled.");
             return null; // Return null if the user cancels the login.
+        }
+    }
+
+    public void signUpPatient() {
+        boolean notDone = true;
+        while (notDone) {
+            Scanner scan = new Scanner(System.in);
+            showMessage("Enter your first name:");
+            String f_name = scan.nextLine();
+            showMessage("Enter your last name:");
+            String l_name = scan.nextLine();
+            showMessage("Specify gender (F/M/X):");
+            String gender = scan.nextLine();
+            showMessage("Enter your address:");
+            String address = scan.nextLine();
+            showMessage("Enter your phone number:");
+            int tel_nbr = scan.nextInt();
+            showMessage("Select a password:");
+            String password =scan.nextLine();
+            showMessage("Enter your birthdate (YYYY-MM-DD):");
+
+            String birthDateStr = scan.next();
+            LocalDate birthDate = null;
+            try {
+                birthDate = LocalDate.parse(birthDateStr);
+            } catch (DateTimeParseException e) {
+                showMessage("Invalid date format. Please use YYYY-MM-DD.");
+                continue;
+            }
+            notDone = false;
+            controller.HandlePatient(f_name, l_name, gender, address, tel_nbr, birthDate, password);
         }
     }
 

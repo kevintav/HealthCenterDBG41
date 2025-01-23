@@ -1,6 +1,8 @@
 package controller;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+
 import model.DBhandler;
 import view.MainView;
 
@@ -65,8 +67,8 @@ public class Controller {
         mainView.showMainMenu();
     }
 
-    public void logOut() {
-        loginStatus = false;
+    public void HandlePatient(String f_name, String l_name, String gender, String address, int tel_nr, LocalDate birthDate, String password) {
+        database.addPatient(f_name, l_name, gender, address, tel_nr, birthDate, password);
     }
 
     public int handleSelection(int min, int max) {
@@ -78,6 +80,10 @@ public class Controller {
             return -1;
         }
         return selection;
+    }
+
+    public void logOut() {
+        loginStatus = false;
     }
 
     public void displayAllDoctors() {
@@ -100,41 +106,7 @@ public class Controller {
         database.displayAllPatients();
     }
 
-    public void signUp() {
-        // TODO: Add functionality here
-        boolean notDone = true;
-        while (notDone) {
-            Scanner scan = new Scanner(System.in);
-            mainView.showMessage("Enter your first name:");
-            String f_name = scan.nextLine();
-            mainView.showMessage("Enter your last name:");
-            String l_name = scan.nextLine();
-            mainView.showMessage("Specify gender (F/M/X):");
-            String gender = scan.nextLine();
-            mainView.showMessage("Enter your address:");
-            String address = scan.nextLine();
-            mainView.showMessage("Enter your phone number:");
-            int tel_nbr = scan.nextInt();
-            mainView.showMessage("Select a password:");
-            String password =scan.nextLine();
-            mainView.showMessage("Enter your birthdate (YYYY-MM-DD):");
-
-            String birthDateStr = scan.next();
-            LocalDate birthDate = null;
-            try {
-                birthDate = LocalDate.parse(birthDateStr);
-            } catch (DateTimeParseException e) {
-                mainView.showMessage("Invalid date format. Please use YYYY-MM-DD.");
-                continue;
-            }
-
-
-            notDone = false;
-            database.addPatient(f_name, l_name, gender, address, tel_nbr, birthDate, password);
-        }
-    }
-
-    public void displayPatient(int id) {
+    public void displayPatientID(int id) {
         database.displayPatient(id);
     }
 }
