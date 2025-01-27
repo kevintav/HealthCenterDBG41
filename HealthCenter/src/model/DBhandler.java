@@ -70,7 +70,7 @@ public class DBhandler {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
+    return null;}
 
 
     public void displayPatient(int identifier) {

@@ -51,6 +51,6 @@ public class PatientView {
     }
 
     private void signUpMenu() {
-        controller.signUp();
+        mainView.signUpPatient();
     }
 }

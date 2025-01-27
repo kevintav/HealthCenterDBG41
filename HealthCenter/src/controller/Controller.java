@@ -103,7 +103,7 @@ public class Controller {
     }
 
     public void displayAllPatients() {
-        database.displayAllPatients();
+        //database.displayAllPatients();
     }
 
     public void displayPatientID(int id) {
