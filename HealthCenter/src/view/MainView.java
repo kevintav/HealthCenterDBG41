@@ -77,6 +77,7 @@ public class MainView {
     }
 
     public void signUpPatient() {
+        //TODO, fungerar inte som det ska längre
         boolean notDone = true;
         while (notDone) {
             Scanner scan = new Scanner(System.in);
