@@ -1,12 +1,9 @@
 package controller;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 
 import model.DBhandler;
 import view.MainView;
-
-import java.util.Scanner;
 
 public class Controller {
     private MainView mainView;
@@ -23,7 +20,7 @@ public class Controller {
         switch (index) {
             case 1:
                 mainView.showPatientMenu();
-                mainView.selectPatientMenu(handleSelection(1, 5));
+                mainView.selectPatientMenu(mainView.handleSelection(1, 5));
                 break;
             case 2:
                 String[] doctorLogin = mainView.loginView(2);
@@ -32,7 +29,7 @@ public class Controller {
                     loginStatus = true;
                     while (loginStatus) {
                         mainView.showDocMenu();
-                        mainView.selectDocMenu(handleSelection(1, 9));
+                        mainView.selectDocMenu(mainView.handleSelection(1, 9));
                         mainView.isLoggedOut();
                     }
                     break;
@@ -47,7 +44,7 @@ public class Controller {
                     loginStatus = true;
                     while (loginStatus) {
                         mainView.showAdminMenu();
-                        mainView.selectAdminMenu(handleSelection(1, 9));
+                        mainView.selectAdminMenu(mainView.handleSelection(1, 9));
                         mainView.isLoggedOut();
                     }
                     break;
@@ -69,17 +66,6 @@ public class Controller {
 
     public void HandlePatient(String f_name, String l_name, String gender, String address, int tel_nr, LocalDate birthDate, String password) {
         database.addPatient(f_name, l_name, gender, address, tel_nr, birthDate, password);
-    }
-
-    public int handleSelection(int min, int max) {
-        Scanner scan = new Scanner(System.in);
-        int selection = scan.nextInt();
-
-        if (selection < min || selection > max) {
-            System.out.println("Invalid menu choice");
-            return -1;
-        }
-        return selection;
     }
 
     public void logOut() {

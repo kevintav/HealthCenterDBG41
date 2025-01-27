@@ -22,34 +22,26 @@ public class AdminView {
         return loggedOut;
     }
 
-    public void select(int index) {
+    public void selectView(int index) {
         switch (index) {
             case 1:
-                addDoctor();
+                showMessage("Doctor added");
                 break;
             case 2:
-                System.out.println("Select a doctor:");
+                showMessage("Select a doctor:");
                 displayAllDoctors();
                 break;
             case 3:
-                deleteDoctor();
+                showMessage("Doctor deleted");
                 break;
             case 4:
-                System.out.println("Logging out");
+                showMessage("Logging out");
                 controller.logOut();
                 break;
             default:
-                System.out.println("Invalid selection");
+                showMessage("Invalid selection");
                 break;
         }
-    }
-
-    private void addDoctor() {
-        System.out.println("Doctor added");
-    }
-
-    public void deleteDoctor() {
-        System.out.println("Doctor deleted");
     }
 
     public void setSpec(int id, String spec) {
@@ -66,5 +58,9 @@ public class AdminView {
 
     public void displayAllDoctors() {
         controller.displayAllDoctors();
+    }
+
+    public void showMessage(String message) {
+        System.out.println(message);
     }
 }

@@ -29,7 +29,7 @@ public class MainView {
         System.out.println("3. Administrator");
         System.out.println("4. Show all patients (test), fetch from database");
         System.out.println("9. Exit");
-        controller.setView(controller.handleSelection(1, 9));
+        controller.setView(handleSelection(1, 9));
     }
 
     public String[] loginView(int type) {
@@ -76,6 +76,17 @@ public class MainView {
         }
     }
 
+    public int handleSelection(int min, int max) {
+        Scanner scan = new Scanner(System.in);
+        int selection = scan.nextInt();
+
+        if (selection < min || selection > max) {
+            System.out.println("Invalid menu choice");
+            return -1;
+        }
+        return selection;
+    }
+
     public void signUpPatient() {
         //TODO, fungerar inte som det ska längre
         boolean notDone = true;
@@ -92,7 +103,7 @@ public class MainView {
             showMessage("Enter your phone number:");
             int tel_nbr = scan.nextInt();
             showMessage("Select a password:");
-            String password =scan.nextLine();
+            String password = scan.nextLine();
             showMessage("Enter your birthdate (YYYY-MM-DD):");
 
             String birthDateStr = scan.next();
@@ -129,7 +140,7 @@ public class MainView {
     }
 
     public void selectAdminMenu(int index) {
-        adminView.select(index);
+        adminView.selectView(index);
     }
 
     public boolean isLoggedOut() {

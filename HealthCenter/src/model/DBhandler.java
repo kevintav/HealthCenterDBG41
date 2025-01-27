@@ -128,6 +128,7 @@ public class DBhandler {
             stmt.setString(4, address);
             stmt.setInt(5, telNbr);
             stmt.setDate(6, java.sql.Date.valueOf(birthDate)); // Konvertera LocalDate till sql.Date
+            stmt.setString(7, password);
 
             // Lägg till registretdatum (idag)
             String registryDate = java.time.LocalDate.now().toString();
