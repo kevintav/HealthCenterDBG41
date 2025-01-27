@@ -2,6 +2,8 @@ package model;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DBhandler {
     private static final String URL = "jdbc:postgresql://pgserver.mau.se/";
@@ -73,20 +75,21 @@ public class DBhandler {
     return null;}
 
 
-    public void displayPatient(int identifier) {
+    public void getAllPatient(int identifier) {
         String sql = "SELECT * FROM patient WHERE medicalNbr = ?";
+        List<String[]> patientInfoList = new ArrayList<>();
         try (Connection connection = getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
-
             pstmt.setInt(1, identifier); // Binda parameter
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    System.out.println("MedicalNbr: " + rs.getInt("medicalNbr"));
-                    System.out.println("Name: " + rs.getString("f_name") + " " + rs.getString("l_name"));
-                    System.out.println("Tel: 0" + rs.getString("tel_nr"));
-                    System.out.println("Address: " + rs.getString("address"));
-                    System.out.println("---------------");
+                    int mNbr = rs.getInt("medicalNbr");
+                    String fullName = rs.getString("f_name")+" "+rs.getString("l_name");
+                    String telNbr = rs.getString("tel_nr");
+                    String address = rs.getString("address");
+
+                    patientInfoList.add(new String[]{String.valueOf(mNbr), fullName, telNbr, address});
                 }
             }
         } catch (SQLException e) {
@@ -99,17 +102,19 @@ public class DBhandler {
         //QUERY FÖR ATT KOLLA OM KOMBINATIONEN FINNS
     return true;}
 
-    public void displayAllDoctors() {
+    public void getAllDoctors() {
         System.out.println("Pediatrician (Pe), Oncologist (On), Proctologist (Pr), Orthopedist (Or)");
         String sql = "SELECT * FROM doctor ORDER BY id ASC";
+        List<String[]> doctorInfoList = new ArrayList<>();
         try (Connection connection = getConnection();
              Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                System.out.println("Id: " + rs.getInt("id"));
-                System.out.println("Name: " + rs.getString("fullName"));
-                System.out.println("Specialization: " + rs.getString("spec"));
-                System.out.println("---------------");
+                int id = rs.getInt("id");
+                String fullName = rs.getString("fullName");
+                String spec = rs.getString("spec");
+
+                doctorInfoList.add(new String[]{String.valueOf(id), fullName, spec});
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -117,7 +122,7 @@ public class DBhandler {
     }
 
     public void addPatient(String fName, String lName, String gender, String address, int telNbr, LocalDate birthDate, String password) {
-        String sql = "INSERT INTO patient (f_name, l_name, gender, address, tel_nr, birthdate, registry) VALUES (?, ?, ?,?,?,?,?)";
+        String sql = "INSERT INTO patient (f_name, l_name, gender, address, tel_nr, birthdate, registry) VALUES (?,?,?,?,?,?,?)";
 
         try (Connection connection = getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {

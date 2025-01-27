@@ -119,6 +119,12 @@ public class MainView {
         }
     }
 
+    public void displayAllPatients(String[] patientArray) {
+        for (String patient : patientArray) {
+            showMessage(patient);
+        }
+    }
+
     public void showPatientMenu() {
         patientView.showMenu();
     }

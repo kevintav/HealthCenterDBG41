@@ -73,7 +73,7 @@ public class Controller {
     }
 
     public void displayAllDoctors() {
-        database.displayAllDoctors();
+        database.getAllDoctors();
     }
 
     public void setSpec(int id, String spec) {
@@ -88,11 +88,11 @@ public class Controller {
         return true;
     }
 
-    public void displayAllPatients() {
-        //database.displayAllPatients();
+    public void displayAllPatients(String[] patientArray) {
+        mainView.displayAllPatients(patientArray);
     }
 
-    public void displayPatientID(int id) {
-        database.displayPatient(id);
+    public void displayPatientByID(int id) {
+        database.getAllPatient(id);
     }
 }
