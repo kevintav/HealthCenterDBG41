@@ -11,6 +11,13 @@ public class AdminView {
         this.controller = controller;
     }
 
+    //TODO
+    // Add a list of specialization of its doctors such as dentist, cardiologist, or psychiatrists, and their visit cost;
+
+    //TODO
+    // Add the information about the health center’s doctors, including employee number, full name, one specialization for each doctor, and
+    // phone. Admin can also delete a doctor from the health center.
+
     public void showMenu() {
         System.out.println("1. Add doctor");
         System.out.println("2. Set doctor specialization");
