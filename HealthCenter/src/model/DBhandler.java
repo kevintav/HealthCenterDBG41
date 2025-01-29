@@ -7,7 +7,7 @@ import java.util.List;
 
 /**     All tables used in this assignment. All methods in this class except help-methods are to send querys to the database.
  * //-- patient: [medicalNbr (PK), f_name, l_name, gender, tel_nr, registryDate]
- *     //-- doctor: [id (PK), name, specialization]
+ *     //-- doctor: [id (PK), name, specialization, password]
  *     //-- tendsto: [medicalNbr (FK till patient), doctorId (FK till doctor), dateAssigned]
  *     //-- medicalRecord: [medicalNbr (FK till patient), doctorId (FK till doctor), diagnosis, description, prescription, visitDate]
  *     //-- appointment: [medicalNbr (FK till patient), doctorId (FK till doctor), appointmentDate, appointmentTime]
@@ -49,6 +49,43 @@ public class DBhandler {
             e.printStackTrace();
         }
     }
+    public void deleteDoctor(int id) {
+        String sql = "DELETE FROM doctor WHERE id=?;";
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setInt(1, id); // Ange ID för doktorn som ska tas bort
+
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println(rowsAffected + " rows deleted.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public boolean doesDoctorExist(int id) {
+        String sql = "SELECT COUNT(*) FROM doctor WHERE id = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     /**
      * This method sends a query to the database to set the specialization of a doctor.
@@ -79,7 +116,6 @@ public class DBhandler {
     public void getAllDoctors() {
         System.out.println("Pediatrician (Pe), Oncologist (On), Proctologist (Pr), Orthopedist (Or)");
         String sql = "SELECT * FROM doctor ORDER BY id ASC";
-        List<String[]> doctorInfoList = new ArrayList<>();
         try (Connection connection = getConnection();
              Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -87,9 +123,7 @@ public class DBhandler {
                 int id = rs.getInt("id");
                 String fullName = rs.getString("fullName");
                 String spec = rs.getString("spec");
-                String password = rs.getString("password");
-                System.out.println(fullName + " , " + spec);
-                doctorInfoList.add(new String[]{String.valueOf(id), fullName, spec, password});
+                System.out.println("docID: "+id+" , "+fullName + " , " + spec);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -218,29 +252,44 @@ public class DBhandler {
     /**
      * This method sends a query to the database that checks if a users password and username matches in the database.
      * This is used to be able to log in and alter the tables.
-     * @param username username
+     * @param userId id.
      * @param password password
      * @return boolean which is true if the password and username has a hit in the database. False otherwise.
      * @author Christoffer Björnheimer
      */
-    public boolean authenticateUser(String username, String password) {
-        String query = "SELECT password FROM user WHERE username = ?";
+
+
+    public boolean authenticateUser (int userId, String password, int userType) {
+        String query;
+
+        // Välj SQL-fråga baserat på användartyp
+        if (userType == 1) {
+            // Autentisering för patienter
+            query = "SELECT password FROM patients WHERE id = ?";
+        } else if (userType == 2) {
+            // Autentisering för läkare
+            query = "SELECT password FROM doctor WHERE id = ?";
+        } else {
+            throw new IllegalArgumentException("Ogiltig användartyp: " + userType);
+        }
+
         try (Connection connection = getConnection();
              PreparedStatement pstmt = connection.prepareStatement(query)) {
 
-            pstmt.setString(1, username);
+            pstmt.setInt(1, userId); // Sätt ID som int
             ResultSet rs = pstmt.executeQuery();
+
             if (rs.next()) {
                 String storedPassword = rs.getString("password");
-                if (storedPassword.equals(password)) { //kollar om pw stämmer
-                    return true;
-                }
+                return storedPassword.equals(password); // Kolla om lösenordet stämmer
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
+
+        return false; // Om ingen användare hittades eller lösenordet inte stämmer
     }
+
 
 
 
