@@ -106,17 +106,4 @@ public class Controller {
     }
 
 
-
-
-    // Formatering av tiderna
-
-
-    // Metod för att konvertera veckodagsnummer till namn
-
-
-
-
-
-
-
 }
