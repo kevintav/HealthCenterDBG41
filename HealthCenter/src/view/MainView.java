@@ -6,9 +6,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class MainView {
+    private Scanner scanner = new Scanner(System.in);
     private final Controller controller;
     private DoctorView docView;
     private AdminView adminView;
@@ -33,34 +35,66 @@ public class MainView {
     }
 
     public String[] loginView(int type) {
+        while (true) {
+            JPanel panel = new JPanel();
+            JLabel userLabel = new JLabel("Enter ID:");
+            JLabel passLabel = new JLabel("Enter password:");
+            JTextField usernameField = new JTextField(10);
+            JPasswordField passwordField = new JPasswordField(10);
+
+            panel.setLayout(new GridLayout(2, 2));
+            panel.add(userLabel);
+            panel.add(usernameField);
+            panel.add(passLabel);
+            panel.add(passwordField);
+
+            String title;
+            if (type == 1) {
+                title = "Patient Login";
+            } else if (type == 2) {
+                title = "Doctor Login";
+            } else {
+                title = "Unknown Login";
+            }
+
+            int result = JOptionPane.showConfirmDialog(null, panel, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+            if (result == JOptionPane.OK_OPTION) {
+                String username = usernameField.getText();
+                String password = new String(passwordField.getPassword());
+
+
+                try {
+                    int userId = Integer.parseInt(username);
+
+                    return new String[]{username, password};
+                } catch (NumberFormatException e) {
+
+                    JOptionPane.showMessageDialog(null, "Användarnamn måste vara ett heltal (ID).", "Ogiltigt ID", JOptionPane.ERROR_MESSAGE);
+
+                }
+            } else {
+                System.out.println("Login canceled.");
+                return null; // Return null if the user cancels the login.
+            }
+        }
+    }
+    public String adminLogin() {
         JPanel panel = new JPanel();
-        JLabel userLabel = new JLabel("Enter doctor id:");
         JLabel passLabel = new JLabel("Enter password:");
-        JTextField usernameField = new JTextField(10);
+
         JPasswordField passwordField = new JPasswordField(10);
 
         panel.setLayout(new GridLayout(2, 2));
-        panel.add(userLabel);
-        panel.add(usernameField);
         panel.add(passLabel);
         panel.add(passwordField);
 
-        String title;
-        if (type == 3) {
-            title = "Admin Login";
-        } else if (type == 2) {
-            title = "Doctor Login";
-        } else {
-            title = "Unknown Login";
-        }
 
-        int result = JOptionPane.showConfirmDialog(null, panel, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        int result = JOptionPane.showConfirmDialog(null, panel, "Admin Login", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         if (result == JOptionPane.OK_OPTION) {
-            String username = usernameField.getText();
-            String password = new String(passwordField.getPassword());
 
-            return new String[]{username, password};
+            return new String(passwordField.getPassword());
         } else {
             System.out.println("Login canceled.");
             return null; // Return null if the user cancels the login.
@@ -68,8 +102,7 @@ public class MainView {
     }
 
     public int handleSelection(int min, int max) {
-        Scanner scan = new Scanner(System.in);
-        int selection = scan.nextInt();
+        int selection = scanner.nextInt();
 
         if (selection < min || selection > max) {
             System.out.println("Invalid menu choice");
@@ -82,22 +115,22 @@ public class MainView {
         //TODO, fungerar inte som det ska längre
         boolean notDone = true;
         while (notDone) {
-            Scanner scan = new Scanner(System.in);
+
             showMessage("Enter your first name:");
-            String f_name = scan.nextLine();
+            String f_name = scanner.nextLine();
             showMessage("Enter your last name:");
-            String l_name = scan.nextLine();
+            String l_name = scanner.nextLine();
             showMessage("Specify gender (F/M/X):");
-            String gender = scan.nextLine();
+            String gender = scanner.nextLine();
             showMessage("Enter your address:");
-            String address = scan.nextLine();
+            String address = scanner.nextLine();
             showMessage("Enter your phone number:");
-            int tel_nbr = scan.nextInt();
+            int tel_nbr = scanner.nextInt();
             showMessage("Select a password:");
-            String password = scan.nextLine();
+            String password = scanner.nextLine();
             showMessage("Enter your birthdate (YYYY-MM-DD):");
 
-            String birthDateStr = scan.next();
+            String birthDateStr = scanner.next();
             LocalDate birthDate = null;
             try {
                 birthDate = LocalDate.parse(birthDateStr);
@@ -149,7 +182,7 @@ public class MainView {
     }
 
     public void inputAvailability() {
-        Scanner scanner = new Scanner(System.in);
+
 
         System.out.print("Ange ditt docID: ");
         int docId = scanner.nextInt();
@@ -209,4 +242,115 @@ public class MainView {
         System.out.println("+------------+---------+---------+---------+---------+");
     }
 
+    public void setSpec() {
+        showMessage("Select a doctor:");
+        controller.displayAllDoctors();
+        int docId = -1;
+
+        while (true) {
+            System.out.print("Ange docID: ");
+            if (scanner.hasNextInt()) {
+                docId = scanner.nextInt();
+                scanner.nextLine();
+                break;
+            } else {
+                System.out.println("Fel: docID måste vara ett heltal. Försök igen.");
+                scanner.nextLine();
+            }
+        }
+
+        String spec;
+
+        while (true) {
+            System.out.println("Ange specialkunskap");
+            System.out.println("(Pediatrician (Pe), Oncologist (On), Proctologist (Pr), Orthopedist (Or))");
+            spec = scanner.nextLine().trim();
+
+            if (spec.matches("[a-zA-Z]{2}")) {
+                break;
+            } else {
+                System.out.println("Fel: Specialkunskap måste vara exakt två bokstäver. Försök igen.");
+            }
+        }
+        controller.setSpec(docId, spec);
+    }
+
+    public void deleteDoctor() {
+        Scanner scanner = new Scanner(System.in);
+        showMessage("Välj en läkare att ta bort:");
+        controller.displayAllDoctors();
+
+        int id = -1;
+        boolean validInput = false;
+
+        while (!validInput) {
+            System.out.print("Ange ID för läkaren som ska tas bort: ");
+            if (scanner.hasNextInt()) {
+                id = scanner.nextInt();
+                scanner.nextLine();
+                validInput = true;
+            } else {
+                System.out.println("Felaktig inmatning! Ange ett giltigt heltal.");
+                scanner.nextLine();
+            }
+        }
+
+        if (!controller.doesDoctorExist(id)) {
+            showMessage("Ingen läkare med ID " + id + " hittades.");
+            return;
+        }
+
+        System.out.print("Vill du verkligen ta bort denna läkare? (Y/N): ");
+        String confirm = scanner.nextLine().trim().toUpperCase();
+
+        if (confirm.equals("Y")) {
+            controller.deleteDoctor(id);
+            showMessage("Läkaren med ID " + id + " har tagits bort.");
+        } else {
+            showMessage("Borttagning avbruten.");
+        }
+    }
+
+
+    //TODO
+    public void configureCosts() {
+    }
+
+    public void addDoctor() {
+        System.out.println("Ange information för den nya läkaren:");
+        System.out.print("Ange namn: ");
+        scanner.nextLine();
+
+        String fullName= scanner.nextLine();
+
+
+
+
+        System.out.print("Skriv in ID för läkaren: ");
+        int id = -1;
+
+
+        while (true) {
+            if (scanner.hasNextInt()) {
+                id = scanner.nextInt();
+                scanner.nextLine();
+                break;
+            } else {
+                System.out.println("Felaktig inmatning. Ange ett giltigt heltal för ID.");
+                scanner.nextLine();
+            }
+        }
+
+        if (controller.doesDoctorExist(id)) {
+            System.out.println("Läkaren med ID " + id + " finns redan.");
+        } else {
+
+            System.out.print("Ange läkarspecialitet (t.ex. Pe för Pediatrician): ");
+            String specialty = scanner.nextLine();
+
+
+            controller.addDoctor(fullName, id, specialty);
+            System.out.println("Läkaren " + fullName + " med ID " + id + " har lagts till.");
+        }
+    }
 }

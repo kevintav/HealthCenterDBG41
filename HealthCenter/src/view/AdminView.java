@@ -3,7 +3,6 @@ import controller.Controller;
 
 public class AdminView {
     private MainView mainView;
-    private boolean loggedOut = false;
     private Controller controller;
 
     public AdminView(MainView mainView, Controller controller) {
@@ -19,29 +18,29 @@ public class AdminView {
     // phone. Admin can also delete a doctor from the health center.
 
     public void showMenu() {
-        System.out.println("1. Add doctor");
+        System.out.println("1. Handle costs");
         System.out.println("2. Set doctor specialization");
-        System.out.println("3. Delete doctor from register");
-        System.out.println("4. Log out");
-    }
-
-    public boolean isLoggedOut() {
-        return loggedOut;
+        System.out.println("3. Add doctor to register");
+        System.out.println("4. Delete doctor from register");
+        System.out.println("5. Log out");
     }
 
     public void selectView(int index) {
         switch (index) {
             case 1:
-                showMessage("Doctor added");
+                mainView.configureCosts();
                 break;
             case 2:
-                showMessage("Select a doctor:");
-                displayAllDoctors();
+                mainView.setSpec();
                 break;
             case 3:
-                showMessage("Doctor deleted");
+                mainView.addDoctor();
                 break;
+
             case 4:
+                mainView.deleteDoctor();
+                break;
+            case 5:
                 showMessage("Logging out");
                 controller.logOut();
                 break;
@@ -49,22 +48,6 @@ public class AdminView {
                 showMessage("Invalid selection");
                 break;
         }
-    }
-
-    public void setSpec(int id, String spec) {
-        controller.setSpec(id, spec);
-    }
-
-    public void addInfo() {
-        // Future implementation
-    }
-
-    public void displayDoctor(int id) {
-        // Future implementation
-    }
-
-    public void displayAllDoctors() {
-        controller.displayAllDoctors();
     }
 
     public void showMessage(String message) {
