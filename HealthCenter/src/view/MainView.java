@@ -34,7 +34,7 @@ public class MainView {
 
     public String[] loginView(int type) {
         JPanel panel = new JPanel();
-        JLabel userLabel = new JLabel("Enter username:");
+        JLabel userLabel = new JLabel("Enter doctor id:");
         JLabel passLabel = new JLabel("Enter password:");
         JTextField usernameField = new JTextField(10);
         JPasswordField passwordField = new JPasswordField(10);
@@ -54,21 +54,12 @@ public class MainView {
             title = "Unknown Login";
         }
 
-        int result = JOptionPane.showConfirmDialog(
-                null,
-                panel,
-                title,
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE
-        );
+        int result = JOptionPane.showConfirmDialog(null, panel, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         if (result == JOptionPane.OK_OPTION) {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
-            /*
-            System.out.println("Username: " + username);
-            System.out.println("Password: " + password);
-            */
+
             return new String[]{username, password};
         } else {
             System.out.println("Login canceled.");
@@ -160,26 +151,62 @@ public class MainView {
     public void inputAvailability() {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Ange doktor ID: ");
+        System.out.print("Ange ditt docID: ");
         int docId = scanner.nextInt();
-        scanner.nextLine(); // Konsumera newline
+        scanner.nextLine();
 
-        while (true) {
-            System.out.print("Ange veckodag: (1 för Mon / 2 för Tis osv) ");
-            String weekDay = scanner.nextLine();
+        System.out.print("Ange veckodag: (1 för Mon / 2 för Tis osv) ");
+        String weekDay = scanner.nextLine();
+        System.out.print("Ange 09:00 (F för tillgänglig, B för uppbokad.): ");
+        String time1 = scanner.nextLine().trim();
+        System.out.print("Ange 09:30 ");
+        String time2 = scanner.nextLine().trim();
+        System.out.print("Ange 10:00 ");
+        String time3 = scanner.nextLine().trim();
+        System.out.print("Ange 10:30 ");
+        String time4 = scanner.nextLine().trim();
+        controller.setAvailability(docId, weekDay, time1, time2, time3, time4);
 
-            System.out.print("Ange 09:00 (F för tillgänglig, B för uppbokad.): ");
-            String time1 = scanner.nextLine().trim();
-            System.out.print("Ange 09:30 ");
-            String time2 = scanner.nextLine().trim();
-            System.out.print("Ange 10:00 ");
-            String time3 = scanner.nextLine().trim();
-            System.out.print("Ange 10:30 ");
-            String time4 = scanner.nextLine().trim();
 
-            controller.setAvailability(docId, weekDay, time1, time2, time3, time4);
-            break;
+    }
+
+    private String formatTime(String time) {
+        if (time.equals("F")) return "Ledigt";
+        if (time.equals("B")) return "-";
+        return time;
+    }
+
+    public void printAvailableTimes(String[][] availabilityArray) {
+        System.out.println("+------------+---------+---------+---------+---------+");
+        System.out.println("| Weekday    |  09:00  |  09:30  |  10:00  |  10:30  |");
+        System.out.println("+------------+---------+---------+---------+---------+");
+
+        boolean hasAvailableTimes = false;
+
+
+        for (int i = 0; i < 7; i++) {
+
+            if (availabilityArray[i][0] != null) {
+                String weekDay = availabilityArray[i][0];
+                String time1 = formatTime(availabilityArray[i][1]);
+                String time2 = formatTime(availabilityArray[i][2]);
+                String time3 = formatTime(availabilityArray[i][3]);
+                String time4 = formatTime(availabilityArray[i][4]);
+
+                if (time1.equals("Ledigt") || time2.equals("Ledigt") || time3.equals("Ledigt") || time4.equals("Ledigt")) {
+                    hasAvailableTimes = true;
+                    System.out.printf("| %-10s | %-7s | %-7s | %-7s | %-7s |\n", weekDay, time1, time2, time3, time4);
+                } else {
+                    System.out.printf("| %-10s | %-7s | %-7s | %-7s | %-7s |\n", weekDay, "-", "-", "-", "-");
+                }
+            }
         }
+
+        if (!hasAvailableTimes) {
+            System.out.println("|   Inga lediga tider tillgängliga                |");
+        }
+
+        System.out.println("+------------+---------+---------+---------+---------+");
     }
 
 }

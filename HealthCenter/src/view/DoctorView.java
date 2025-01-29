@@ -27,7 +27,7 @@ public class DoctorView {
     public void select(int index) {
         switch (index){
             case 1:
-                System.out.println("set availability");
+                System.out.println("Set your availability");
                 mainView.inputAvailability();
                 break;
             case 2:
