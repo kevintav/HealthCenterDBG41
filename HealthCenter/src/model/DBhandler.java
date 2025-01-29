@@ -252,7 +252,7 @@ public class DBhandler {
     /**
      * This method sends a query to the database that checks if a users password and username matches in the database.
      * This is used to be able to log in and alter the tables.
-     * @param username username
+     * @param userId id.
      * @param password password
      * @return boolean which is true if the password and username has a hit in the database. False otherwise.
      * @author Christoffer Björnheimer
