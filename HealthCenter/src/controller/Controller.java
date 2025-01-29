@@ -1,7 +1,6 @@
 package controller;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import model.DBhandler;
 import view.MainView;
@@ -95,7 +94,7 @@ public class Controller {
     }
 
     public void displayPatientByID(int id) {
-        database.getAllPatient(id);
+        database.getCertainPatient(id);
     }
 
     public void getAvailability(String docId){

@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/** All tables used in this assignment.
+/**     All tables used in this assignment. All methods in this class except help-methods are to send querys to the database.
  * //-- patient: [medicalNbr (PK), f_name, l_name, gender, tel_nr, registryDate]
  *     //-- doctor: [id (PK), name, specialization]
  *     //-- tendsto: [medicalNbr (FK till patient), doctorId (FK till doctor), dateAssigned]
@@ -26,8 +26,13 @@ public class DBhandler {
     }
 
 
-    // TODO
-    //  DOCTOR TABLE
+    /**
+     * This method sends a query to the database to add a doctor to the doctor table.
+     * @param id is the unique docId that is used to identify a specific doctor
+     * @param fullName The doctors name
+     * @param spec The doctors' specialisation.
+     * @author Christoffer Björnheimer
+     */
     public void addDoctor(int id, String fullName, String spec) {
         String sql = "INSERT INTO doctor (id, fullname,spec) VALUES (?, ?, ?)";
         try (Connection connection = getConnection();
@@ -45,6 +50,12 @@ public class DBhandler {
         }
     }
 
+    /**
+     * This method sends a query to the database to set the specialization of a doctor.
+     * @param id is the docId to identify which doctor to alter.
+     * @param spec a 2-letter specialization.
+     * @author Christoffer Björnheimer
+     */
     public void setSpecialization(int id, String spec) {
         String sql = "UPDATE doctor SET spec=? WHERE id=?;";
         try (Connection connection = getConnection();
@@ -61,6 +72,10 @@ public class DBhandler {
         }
     }
 
+    /**
+     * Method for sending a query to the database to receive a printout of all the doctors.
+     * @author Christoffer Björnheimer
+     */
     public void getAllDoctors() {
         System.out.println("Pediatrician (Pe), Oncologist (On), Proctologist (Pr), Orthopedist (Or)");
         String sql = "SELECT * FROM doctor ORDER BY id ASC";
@@ -83,7 +98,15 @@ public class DBhandler {
 
 
     //TODO
-    // PATIENT TABLE
+    // PATIENT TABLE'
+
+    /**
+     * This method sends a query to update a specific patient in the patient table.
+     * @param medicalNbr unique medicalnbr for a patient.
+     * @param newPhone new number to be set as phone number in the table.
+     * @param newAddress new address to be set as the phone number in the table.
+     * @author Christoffer Björnheimer
+     */
     public void updatePatientInfo(int medicalNbr, String newPhone, String newAddress) {
         String sql = "UPDATE patient SET tel_nr = ?, address = ? WHERE medicalNbr = ?";
         try (Connection connection = getConnection();
@@ -99,7 +122,13 @@ public class DBhandler {
         }
     }
 
-    public void getAllPatient(int identifier) {
+    /**
+     * Method that sends a query that searches for a specfic patient in the patient database. It then prints
+     * the patients information out in the console.
+     * @param identifier is the medicalnbr that is used in the search.
+     * @author Christoffer Björnheimer
+     */
+    public void getCertainPatient(int identifier) {
         String sql = "SELECT * FROM patient WHERE medicalNbr = ?";
         List<String[]> patientInfoList = new ArrayList<>();
         try (Connection connection = getConnection();
@@ -121,9 +150,14 @@ public class DBhandler {
         }
     }
 
-    public String[][] getAllPatients() {
+    /**
+     * Method for sending a query to the database that retrieves all patients in the patients table and prints them out
+     * in the console.
+     * @author Christoffer Björnheimer
+     */
+    public void getAllPatients() {
         String sql = "SELECT * FROM patient ORDER BY medicalnbr ASC";
-        String[][] patientsInformation;
+
         try (Connection connection = getConnection();
              Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -137,9 +171,21 @@ public class DBhandler {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+
     }
 
+    /**
+     * This method sends a query to add a new patient into the patient database. It takes in all necessary parameters
+     * needed to fill all columns in the table.
+     * @param fName First Name
+     * @param lName Last Name
+     * @param gender Gender (one letter, ex. M/F/X)
+     * @param address Address
+     * @param telNbr PhoneNumber (max 10 numbers), int
+     * @param birthDate Birth Date
+     * @param password Password
+     * @author Christoffer Björnheimer
+     */
     public void addPatient(String fName, String lName, String gender, String address, int telNbr, LocalDate birthDate, String password) {
         String sql = "INSERT INTO patient (f_name, l_name, gender, address, tel_nr, birthdate, registry) VALUES (?,?,?,?,?,?,?)";
 
@@ -168,8 +214,17 @@ public class DBhandler {
 
     //TODO
     // USER TABLE
+
+    /**
+     * This method sends a query to the database that checks if a users password and username matches in the database.
+     * This is used to be able to log in and alter the tables.
+     * @param username username
+     * @param password password
+     * @return boolean which is true if the password and username has a hit in the database. False otherwise.
+     * @author Christoffer Björnheimer
+     */
     public boolean authenticateUser(String username, String password) {
-        String query = "SELECT password FROM users WHERE username = ?";
+        String query = "SELECT password FROM user WHERE username = ?";
         try (Connection connection = getConnection();
              PreparedStatement pstmt = connection.prepareStatement(query)) {
 
@@ -191,6 +246,14 @@ public class DBhandler {
 
     //TODO
     // AVAILABILITY TABLE
+
+    /**
+     *
+     * @param doctorId
+     * @param weekDay
+     * @param timeSlot
+     * @return
+     */
     public boolean isDoctorAvailable(int doctorId, String weekDay, String timeSlot) {
         String query = "SELECT COUNT(*) FROM availability WHERE docId = ? AND weekDay = ? AND (time1 = ? OR time2 = ? OR time3 = ? OR time4 = ?)";
         try (Connection connection = getConnection();
@@ -212,6 +275,16 @@ public class DBhandler {
         }
     }
 
+    /**
+     *
+     * @param docId
+     * @param weekDay
+     * @param time1
+     * @param time2
+     * @param time3
+     * @param time4
+     * @return
+     */
     public boolean setAvailability(int docId, String weekDay, String time1, String time2, String time3, String time4) {
         String checkQuery = "SELECT COUNT(*) FROM availability WHERE docId = ? AND weekDay = ?";
         String insertQuery = "INSERT INTO availability (docId, weekDay, time1, time2, time3, time4) VALUES (?, ?, ?, ?, ?, ?)";
@@ -256,7 +329,11 @@ public class DBhandler {
         }
     }
 
-
+    /**
+     *
+     * @param docId
+     * @return
+     */
     public String[][] getAvailability(int docId) {
         String[][] availabilityArray = new String[7][5]; // 7 dagar, 5 kolumner (1 för veckodag och 4 för tider)
         String query = "SELECT weekDay, time1, time2, time3, time4 FROM availability WHERE docId = ?";
@@ -294,6 +371,12 @@ public class DBhandler {
 
     //TODO
     // HELP METHOD
+
+    /**
+     *
+     * @param dayNumber
+     * @return
+     */
     private String getWeekdayName(String dayNumber) {
         switch (dayNumber) {
             case "1":
@@ -317,6 +400,12 @@ public class DBhandler {
 
     //TODO
     // TENDSTO TABLE
+
+    /**
+     *
+     * @param medicalNbr
+     * @param doctorId
+     */
     public void assignDoctorToPatient(int medicalNbr, int doctorId) {
         String sql = "INSERT INTO tendsto (medicalNbr, doctorId) VALUES (?, ?)";
         try (Connection connection = getConnection();
@@ -334,6 +423,16 @@ public class DBhandler {
 
     //TODO
     // MEDICALRECORD TABLE
+
+    /**
+     *
+     * @param medicalNbr
+     * @param doctorId
+     * @param diagnosis
+     * @param description
+     * @param prescription
+     * @param visitDate
+     */
     public void addMedicalRecord(int medicalNbr, int doctorId, String diagnosis, String description, String prescription, LocalDate visitDate) {
         String sql = "INSERT INTO medicalRecord (medicalNbr, doctorId, diagnosis, description, prescription, visitDate) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -356,6 +455,14 @@ public class DBhandler {
 
     //TODO
     // APPOINTMENT TABLE
+
+    /**
+     *
+     * @param medicalNbr
+     * @param doctorId
+     * @param appointmentDate
+     * @param appointmentTime
+     */
     public void bookAppointment(int medicalNbr, int doctorId, LocalDate appointmentDate, String appointmentTime) {
         String sql = "INSERT INTO appointment (medicalNbr, doctorId, appointmentDate, appointmentTime) VALUES (?, ?, ?, ?)";
 
