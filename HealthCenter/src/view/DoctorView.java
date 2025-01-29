@@ -28,10 +28,10 @@ public class DoctorView {
         switch (index){
             case 1:
                 System.out.println("set availability");
-                setAvailability();
+                mainView.inputAvailability();
                 break;
             case 2:
-                System.out.println("booked appointsments");
+                System.out.println("booked appointments");
                 break;
             case 3:
                 System.out.println("showed your patients");

@@ -27,7 +27,7 @@ public class MainView {
         System.out.println("1. Patient");
         System.out.println("2. Doctor");
         System.out.println("3. Administrator");
-        System.out.println("4. Show all patients (test), fetch from database");
+        System.out.println("4. Visa tillgänglihet för läkare 1. ");
         System.out.println("9. Exit");
         controller.setView(handleSelection(1, 9));
     }
@@ -156,4 +156,30 @@ public class MainView {
     public void showMessage(String message) {
         System.out.println(message);
     }
+
+    public void inputAvailability() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Ange doktor ID: ");
+        int docId = scanner.nextInt();
+        scanner.nextLine(); // Konsumera newline
+
+        while (true) {
+            System.out.print("Ange veckodag: (1 för Mon / 2 för Tis osv) ");
+            String weekDay = scanner.nextLine();
+
+            System.out.print("Ange 09:00 (F för tillgänglig, B för uppbokad.): ");
+            String time1 = scanner.nextLine().trim();
+            System.out.print("Ange 09:30 ");
+            String time2 = scanner.nextLine().trim();
+            System.out.print("Ange 10:00 ");
+            String time3 = scanner.nextLine().trim();
+            System.out.print("Ange 10:30 ");
+            String time4 = scanner.nextLine().trim();
+
+            controller.setAvailability(docId, weekDay, time1, time2, time3, time4);
+            break;
+        }
+    }
+
 }

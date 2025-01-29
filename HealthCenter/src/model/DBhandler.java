@@ -113,13 +113,110 @@ public class DBhandler {
                 int id = rs.getInt("id");
                 String fullName = rs.getString("fullName");
                 String spec = rs.getString("spec");
-
-                doctorInfoList.add(new String[]{String.valueOf(id), fullName, spec});
+                String password = rs.getString("password");
+                System.out.println(fullName+" , "+ spec );
+                doctorInfoList.add(new String[]{String.valueOf(id), fullName, spec, password});
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    public boolean setAvailability(int docId, String weekDay, String time1, String time2, String time3, String time4) {
+        String checkQuery = "SELECT COUNT(*) FROM availability WHERE docId = ? AND weekDay = ?";
+        String insertQuery = "INSERT INTO availability (docId, weekDay, time1, time2, time3, time4) VALUES (?, ?, ?, ?, ?, ?)";
+        String updateQuery = "UPDATE availability SET time1 = ?, time2 = ?, time3 = ?, time4 = ? WHERE docId = ? AND weekDay = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
+
+            // Kolla om en post redan finns för docId och weekDay
+            checkStmt.setInt(1, docId);
+            checkStmt.setString(2, weekDay);
+            ResultSet rs = checkStmt.executeQuery();
+            rs.next();
+            int count = rs.getInt(1);
+
+            if (count > 0) {
+                // Uppdatera befintlig rad
+                try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
+                    updateStmt.setString(1, time1);
+                    updateStmt.setString(2, time2);
+                    updateStmt.setString(3, time3);
+                    updateStmt.setString(4, time4);
+                    updateStmt.setInt(5, docId);
+                    updateStmt.setString(6, weekDay);
+                    updateStmt.executeUpdate();
+                }
+            } else {
+                // Lägg till ny rad
+                try (PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
+                    insertStmt.setInt(1, docId);
+                    insertStmt.setString(2, weekDay);
+                    insertStmt.setString(3, time1);
+                    insertStmt.setString(4, time2);
+                    insertStmt.setString(5, time3);
+                    insertStmt.setString(6, time4);
+                    insertStmt.executeUpdate();
+                }
+            }
+            return true; // Operation lyckades
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Något gick fel
+        }
+    }
+
+
+
+    public String[][] getAvailability(int docId) {
+        String[][] availabilityArray = new String[7][5]; // 7 dagar, 5 kolumner (1 för veckodag och 4 för tider)
+        String query = "SELECT weekDay, time1, time2, time3, time4 FROM availability WHERE docId = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, docId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String weekDayNum = rs.getString("weekDay");
+                String time1 = rs.getString("time1");
+                String time2 = rs.getString("time2");
+                String time3 = rs.getString("time3");
+                String time4 = rs.getString("time4");
+
+                // Konvertera vecka till index 0-6 (Måndag till Söndag)
+                int weekDayIndex = Integer.parseInt(weekDayNum) - 1;
+
+                // Fyll i arrayen med datan
+                availabilityArray[weekDayIndex][0] = getWeekdayName(weekDayNum); // Sätt veckodagen
+                availabilityArray[weekDayIndex][1] = time1 != null ? time1 : "-";
+                availabilityArray[weekDayIndex][2] = time2 != null ? time2 : "-";
+                availabilityArray[weekDayIndex][3] = time3 != null ? time3 : "-";
+                availabilityArray[weekDayIndex][4] = time4 != null ? time4 : "-";
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return availabilityArray;
+    }
+
+    private String getWeekdayName(String dayNumber) {
+        switch (dayNumber) {
+            case "1": return "Monday";
+            case "2": return "Tuesday";
+            case "3": return "Wednesday";
+            case "4": return "Thursday";
+            case "5": return "Friday";
+            case "6": return "Saturday";
+            case "7": return "Sunday";
+            default: return "Unknown";
+        }
+    }
+
 
     public void addPatient(String fName, String lName, String gender, String address, int telNbr, LocalDate birthDate, String password) {
         String sql = "INSERT INTO patient (f_name, l_name, gender, address, tel_nr, birthdate, registry) VALUES (?,?,?,?,?,?,?)";

@@ -1,6 +1,7 @@
 package controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import model.DBhandler;
 import view.MainView;
@@ -53,7 +54,7 @@ public class Controller {
                 }
                 break;
             case 4:
-                displayAllPatients();
+                printAvailableTimes(database.getAvailability(1));
                 break;
             case 9:
                 System.out.println("Exiting");
@@ -95,4 +96,61 @@ public class Controller {
     public void displayPatientByID(int id) {
         database.getAllPatient(id);
     }
+
+    public void getAvailability(String docId){
+    }
+
+    public void setAvailability(int docId, String weekDay, String time1, String time2, String time3, String time4){
+        database.setAvailability(docId, weekDay, time1, time2, time3, time4);
+    }
+
+
+    public void printAvailableTimes(String[][] availabilityArray) {
+        System.out.println("+------------+---------+---------+---------+---------+");
+        System.out.println("| Weekday    |  09:00  |  09:30  |  10:00  |  10:30  |");
+        System.out.println("+------------+---------+---------+---------+---------+");
+
+        boolean hasAvailableTimes = false;
+
+
+        for (int i = 0; i < 7; i++) {
+
+            if (availabilityArray[i][0] != null) {
+                String weekDay = availabilityArray[i][0];
+                String time1 = formatTime(availabilityArray[i][1]);
+                String time2 = formatTime(availabilityArray[i][2]);
+                String time3 = formatTime(availabilityArray[i][3]);
+                String time4 = formatTime(availabilityArray[i][4]);
+
+                if (time1.equals("Ledigt") || time2.equals("Ledigt") || time3.equals("Ledigt") || time4.equals("Ledigt")) {
+                    hasAvailableTimes = true;
+                    System.out.printf("| %-10s | %-7s | %-7s | %-7s | %-7s |\n", weekDay, time1, time2, time3, time4);
+                } else {
+                    System.out.printf("| %-10s | %-7s | %-7s | %-7s | %-7s |\n", weekDay, "-", "-", "-", "-");
+                }
+            }
+        }
+
+        if (!hasAvailableTimes) {
+            System.out.println("|   Inga lediga tider tillgängliga                |");
+        }
+
+        System.out.println("+------------+---------+---------+---------+---------+");
+    }
+
+    // Formatering av tiderna
+    private String formatTime(String time) {
+        if (time.equals("F")) return "Ledigt";
+        if (time.equals("B")) return "-";
+        return time;
+    }
+
+    // Metod för att konvertera veckodagsnummer till namn
+
+
+
+
+
+
+
 }
