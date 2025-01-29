@@ -21,7 +21,6 @@ public class DBhandler {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-
     public void addDoctor(int id, String fullName, String spec){
         String sql = "INSERT INTO doctor (id, fullname,spec) VALUES (?, ?, ?)";
         // doctor: [id(PK), name, specialization]
@@ -56,23 +55,7 @@ public class DBhandler {
         }
     }
 
-    public String[][] getAllPatients() {
-        String sql = "SELECT * FROM patient ORDER BY medicalnbr ASC";
-        String[][] patientsInformation;
-        try (Connection connection = getConnection();
-             Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                System.out.println("MedicalNbr: " + rs.getInt("medicalNbr"));
-                System.out.println("Name: " + rs.getString("f_name")+ " "+ rs.getString("l_name") );
-                System.out.println("tel: 0" + rs.getString("tel_nr"));
-                System.out.println("address: " + rs.getString("address"));
-                System.out.println("---------------");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    return null;}
+
 
 
     public void getAllPatient(int identifier) {
@@ -97,10 +80,42 @@ public class DBhandler {
         }
     }
 
+    public String[][] getAllPatients() {
+        String sql = "SELECT * FROM patient ORDER BY medicalnbr ASC";
+        String[][] patientsInformation;
+        try (Connection connection = getConnection();
+             Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                System.out.println("MedicalNbr: " + rs.getInt("medicalNbr"));
+                System.out.println("Name: " + rs.getString("f_name")+ " "+ rs.getString("l_name") );
+                System.out.println("tel: 0" + rs.getString("tel_nr"));
+                System.out.println("address: " + rs.getString("address"));
+                System.out.println("---------------");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;}
 
-    public boolean checkDetails(char[][] details) {
-        //QUERY FÖR ATT KOLLA OM KOMBINATIONEN FINNS
-    return true;}
+
+    public boolean authenticateUser(String username, String password) {
+        String query = "SELECT password FROM users WHERE username = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+
+            pstmt.setString(1, username);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                String storedPasswordHash = rs.getString("password");
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     public void getAllDoctors() {
         System.out.println("Pediatrician (Pe), Oncologist (On), Proctologist (Pr), Orthopedist (Or)");
@@ -130,7 +145,6 @@ public class DBhandler {
         try (Connection conn = getConnection();
              PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
 
-            // Kolla om en post redan finns för docId och weekDay
             checkStmt.setInt(1, docId);
             checkStmt.setString(2, weekDay);
             ResultSet rs = checkStmt.executeQuery();
@@ -138,7 +152,7 @@ public class DBhandler {
             int count = rs.getInt(1);
 
             if (count > 0) {
-                // Uppdatera befintlig rad
+
                 try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
                     updateStmt.setString(1, time1);
                     updateStmt.setString(2, time2);
@@ -149,7 +163,7 @@ public class DBhandler {
                     updateStmt.executeUpdate();
                 }
             } else {
-                // Lägg till ny rad
+
                 try (PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
                     insertStmt.setInt(1, docId);
                     insertStmt.setString(2, weekDay);
@@ -160,12 +174,28 @@ public class DBhandler {
                     insertStmt.executeUpdate();
                 }
             }
-            return true; // Operation lyckades
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
-            return false; // Något gick fel
+            return false;
         }
     }
+
+    public void updatePatientInfo(int medicalNbr, String newPhone, String newAddress) {
+        String sql = "UPDATE patient SET tel_nr = ?, address = ? WHERE medicalNbr = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, newPhone);
+            stmt.setString(2, newAddress);
+            stmt.setInt(3, medicalNbr);
+
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println(rowsAffected + " rows updated.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 
@@ -243,4 +273,81 @@ public class DBhandler {
             e.printStackTrace();
         }
     }
+
+    public void assignDoctorToPatient(int medicalNbr, int doctorId) {
+        String sql = "INSERT INTO tendsto (medicalNbr, doctorId) VALUES (?, ?)";
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setInt(1, medicalNbr);
+            stmt.setInt(2, doctorId);
+
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println(rowsAffected + " rows added.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addMedicalRecord(int medicalNbr, int doctorId, String diagnosis, String description, String prescription, LocalDate visitDate) {
+        String sql = "INSERT INTO medicalRecord (medicalNbr, doctorId, diagnosis, description, prescription, visitDate) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setInt(1, medicalNbr);
+            stmt.setInt(2, doctorId);
+            stmt.setString(3, diagnosis);
+            stmt.setString(4, description);
+            stmt.setString(5, prescription);
+            stmt.setDate(6, java.sql.Date.valueOf(visitDate));
+
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println(rowsAffected + " rows added.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void bookAppointment(int medicalNbr, int doctorId, LocalDate appointmentDate, String appointmentTime) {
+        String sql = "INSERT INTO appointment (medicalNbr, doctorId, appointmentDate, appointmentTime) VALUES (?, ?, ?, ?)";
+
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setInt(1, medicalNbr);
+            stmt.setInt(2, doctorId);
+            stmt.setDate(3, java.sql.Date.valueOf(appointmentDate));
+            stmt.setString(4, appointmentTime);
+
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println(rowsAffected + " rows added.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isDoctorAvailable(int doctorId, String weekDay, String timeSlot) {
+        String query = "SELECT COUNT(*) FROM availability WHERE docId = ? AND weekDay = ? AND (time1 = ? OR time2 = ? OR time3 = ? OR time4 = ?)";
+        try (Connection connection = getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+
+            pstmt.setInt(1, doctorId);
+            pstmt.setString(2, weekDay);
+            pstmt.setString(3, timeSlot);
+            pstmt.setString(4, timeSlot);
+            pstmt.setString(5, timeSlot);
+            pstmt.setString(6, timeSlot);
+
+            ResultSet rs = pstmt.executeQuery();
+            rs.next();
+            return rs.getInt(1) > 0;  // Return true if available, false if not
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+
 }
