@@ -48,14 +48,7 @@ public class MainView {
             panel.add(passLabel);
             panel.add(passwordField);
 
-            String title;
-            if (type == 1) {
-                title = "Patient Login";
-            } else if (type == 2) {
-                title = "Doctor Login";
-            } else {
-                title = "Unknown Login";
-            }
+            String title = (type == 1) ? "Patient Login" : "Doctor Login";
 
             int result = JOptionPane.showConfirmDialog(null, panel, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
@@ -63,15 +56,11 @@ public class MainView {
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
 
-
                 try {
                     int userId = Integer.parseInt(username);
-
                     return new String[]{username, password};
                 } catch (NumberFormatException e) {
-
                     JOptionPane.showMessageDialog(null, "Användarnamn måste vara ett heltal (ID).", "Ogiltigt ID", JOptionPane.ERROR_MESSAGE);
-
                 }
             } else {
                 System.out.println("Login canceled.");
@@ -103,6 +92,7 @@ public class MainView {
 
     public int handleSelection(int min, int max) {
         int selection = scanner.nextInt();
+        scanner.nextLine(); //consumes the leftover newline
 
         if (selection < min || selection > max) {
             System.out.println("Invalid menu choice");
@@ -124,6 +114,7 @@ public class MainView {
             String address = scanner.nextLine();
             showMessage("Enter your phone number:");
             int tel_nbr = scanner.nextInt();
+            scanner.nextLine();
             showMessage("Select a password:");
             String password = scanner.nextLine();
             showMessage("Enter your birthdate (YYYY-MM-DD):");
@@ -134,10 +125,13 @@ public class MainView {
                 birthDate = LocalDate.parse(birthDateStr);
             } catch (DateTimeParseException e) {
                 showMessage("Invalid date format. Please use YYYY-MM-DD.");
+                scanner.nextLine();
                 continue;
             }
             notDone = false;
             controller.HandlePatient(f_name, l_name, gender, address, tel_nbr, birthDate, password);
+            showMessage("Patient registrerad");
+            showMainMenu();
         }
     }
 
@@ -182,19 +176,18 @@ public class MainView {
     public void inputAvailability() {
 
 
-        System.out.print("Ange ditt docID: ");
+        showMessage("Ange ditt docID: ");
         int docId = scanner.nextInt();
         scanner.nextLine();
-
-        System.out.print("Ange veckodag: (1 för Mon / 2 för Tis osv) ");
+        showMessage("Ange veckodag: (1 för Mon / 2 för Tis osv) ");
         String weekDay = scanner.nextLine();
-        System.out.print("Ange 09:00 (F för tillgänglig, B för uppbokad.): ");
+        showMessage("Ange 09:00 (F för tillgänglig, B för uppbokad.): ");
         String time1 = scanner.nextLine().trim();
-        System.out.print("Ange 09:30 ");
+        showMessage("Ange 09:30 ");
         String time2 = scanner.nextLine().trim();
-        System.out.print("Ange 10:00 ");
+        showMessage("Ange 10:00 ");
         String time3 = scanner.nextLine().trim();
-        System.out.print("Ange 10:30 ");
+        showMessage("Ange 10:30 ");
         String time4 = scanner.nextLine().trim();
         controller.setAvailability(docId, weekDay, time1, time2, time3, time4);
 
@@ -321,12 +314,8 @@ public class MainView {
 
         String fullName= scanner.nextLine();
 
-
-
-
         System.out.print("Skriv in ID för läkaren: ");
         int id = -1;
-
 
         while (true) {
             if (scanner.hasNextInt()) {

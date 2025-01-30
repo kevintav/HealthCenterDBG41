@@ -10,6 +10,7 @@ public class Controller {
     private DBhandler database;
     private boolean loginStatus;
     private String adminPassword = "";
+    private String[] loginInformation;
 
     public Controller() {
         this.mainView = new MainView(this);
@@ -21,15 +22,16 @@ public class Controller {
         switch (index) {
             case 1:
                 mainView.showPatientMenu();
-                mainView.selectPatientMenu(mainView.handleSelection(1, 5));
+                mainView.selectPatientMenu(mainView.handleSelection(1,5));
                 
-                String[] patientLogIn = mainView.loginView(1);
-                checkDetails(patientLogIn,1);
+                loginInformation = mainView.loginView(1);
+                checkDetails(loginInformation,1);
+
                 break;
             case 2:
-                String[] doctorLogin = mainView.loginView(2);
-                if (checkDetails(doctorLogin, 2)) {
-                    System.out.println("Login successful");
+                loginInformation = mainView.loginView(2);
+                if (checkDetails( loginInformation, 2)) {
+                    System.out.println("Login successful /doctor");
                     loginStatus = true;
                     while (loginStatus) {
                         mainView.showDocMenu();
@@ -134,5 +136,9 @@ public class Controller {
 
     public void addDoctor(String fullName, int id, String specialty) {
         database.addDoctor(id, fullName, specialty);
+    }
+
+    public boolean isLoginStatus() {
+        return loginStatus;
     }
 }

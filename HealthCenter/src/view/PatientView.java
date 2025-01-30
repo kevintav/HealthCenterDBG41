@@ -14,11 +14,11 @@ public class PatientView {
     }
 
     public void showMenu() {
-        System.out.println("1. Sign up");
-        System.out.println("2. See your information (requires log in)");
-        System.out.println("3. Book appointment (requires log in)");
-        System.out.println("4. See your diagnosis/prescription (requires log in)");
-        System.out.println("5. Go back");
+        showMessage("1. Sign up");
+        showMessage("2. See your information (requires log in)");
+        showMessage("3. Book appointment (requires log in)");
+        showMessage("4. See your diagnosis/prescription (requires log in)");
+        showMessage("5. Go back");
     }
 
     public void bookAppointment() {
@@ -33,22 +33,36 @@ public class PatientView {
                 signUpMenu();
                 break;
             case 2:
-                System.out.println("information /log in");
+                showMessage("information /log in");
+                if (!controller.isLoginStatus()) {
+                    mainView.loginView(1);
+                }
                 break;
             case 3:
-                System.out.println("book /log in");
+                showMessage("book /log in");
+                if (!controller.isLoginStatus()) {
+                    mainView.loginView(1);
+                }
                 break;
             case 4:
-                System.out.println("diagnosis /log in");
+                showMessage("diagnosis /log in");
+                if (!controller.isLoginStatus()) {
+                    mainView.loginView(1);
+                }
             case 5:
-                System.out.println("Returning to main menu");
+                showMessage("Returning to main menu");
                 controller.logOut();
+                controller.setView(mainView.handleSelection(1,9));
                 break;
             default:
-                System.out.println("Wrong input");
+                showMessage("Wrong input");
                 break;
 
         }
+    }
+
+    public void showMessage(String message) {
+        System.out.println(message);
     }
 
     private void signUpMenu() {

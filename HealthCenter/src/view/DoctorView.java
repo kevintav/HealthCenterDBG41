@@ -13,12 +13,10 @@ public class DoctorView {
     }
 
     public void showMenu(){
-
-        String menu1= "1. Availability";
-        String menu2= "2. View booked appointments.";
-        String menu3= "3. View your patients";
-        String menu4= "4. Log out";
-        System.out.printf("%s %n%s %n%s%n%s%n", menu1,menu2,menu3,menu4);
+        showMessage("1. Availability");
+        showMessage("2. View booked appointments.");
+        showMessage("3. View your patients");
+        showMessage("4. Log out");
    }
 
     public static void setAvailability(){
@@ -45,6 +43,10 @@ public class DoctorView {
                 break;
 
         }
+    }
+
+    public void showMessage(String message) {
+        System.out.println(message);
     }
 
     public boolean isLoggedOut() {
