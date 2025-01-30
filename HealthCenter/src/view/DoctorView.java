@@ -39,7 +39,7 @@ public class DoctorView {
                 controller.logOut();
                 break;
             default:
-                showMessage("wrong");
+                showMessage("Fel input");
                 break;
 
         }
