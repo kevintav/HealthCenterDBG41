@@ -162,9 +162,9 @@ public class DBhandler {
      * @param identifier is the medicalnbr that is used in the search.
      * @author Christoffer Björnheimer
      */
-    public void getCertainPatient(int identifier) {
+    public String[] getCertainPatient(int identifier) {
         String sql = "SELECT * FROM patient WHERE medicalNbr = ?";
-        List<String[]> patientInfoList = new ArrayList<>();
+        String[] patientInformation = new String[8];
         try (Connection connection = getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, identifier); // Binda parameter
@@ -173,15 +173,31 @@ public class DBhandler {
                 while (rs.next()) {
                     int mNbr = rs.getInt("medicalNbr");
                     String fullName = rs.getString("f_name") + " " + rs.getString("l_name");
+                    String gender = rs.getString("gender");
                     String telNbr = rs.getString("tel_nr");
                     String address = rs.getString("address");
+                    String birthdate = rs.getString("birthdate");
+                    String registryDate = rs.getString("registry");
+                    String password = rs.getString("pw");
+                    if (rs.getString("pw") == null) {
+                        password = "No password set";
+                    }
 
-                    patientInfoList.add(new String[]{String.valueOf(mNbr), fullName, telNbr, address});
+                    patientInformation[0] = String.valueOf(mNbr);
+                    patientInformation[1] = fullName;
+                    patientInformation[2] = telNbr;
+                    patientInformation[3] = address;
+                    patientInformation[4] = gender;
+                    patientInformation[5] = birthdate;
+                    patientInformation[6] = registryDate;
+                    patientInformation[7] = password;
+                    return patientInformation;
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return patientInformation;
     }
 
     /**
@@ -261,11 +277,12 @@ public class DBhandler {
 
     public boolean authenticateUser (int userId, String password, int userType) {
         String query;
+        String storedPassword;
 
         // Välj SQL-fråga baserat på användartyp
         if (userType == 1) {
             // Autentisering för patienter
-            query = "SELECT password FROM patients WHERE id = ?";
+            query = "SELECT pw FROM patient WHERE medicalnbr = ?";
         } else if (userType == 2) {
             // Autentisering för läkare
             query = "SELECT password FROM doctor WHERE id = ?";
@@ -280,21 +297,18 @@ public class DBhandler {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                String storedPassword = rs.getString("password");
+                if (userType == 1) {
+                    storedPassword = rs.getString("pw");
+                } else {
+                    storedPassword = rs.getString("password");
+                }
                 return storedPassword.equals(password); // Kolla om lösenordet stämmer
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return false; // Om ingen användare hittades eller lösenordet inte stämmer
     }
-
-
-
-
-    //TODO
-    // AVAILABILITY TABLE
 
     /**
      *
@@ -417,9 +431,6 @@ public class DBhandler {
 
         return availabilityArray;
     }
-
-    //TODO
-    // HELP METHOD
 
     /**
      *

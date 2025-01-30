@@ -25,21 +25,21 @@ public class DoctorView {
     public void select(int index) {
         switch (index){
             case 1:
-                System.out.println("Set your availability");
+                showMessage("Set your availability");
                 mainView.inputAvailability();
                 break;
             case 2:
-                System.out.println("booked appointments");
+                showMessage("booked appointments");
                 break;
             case 3:
-                System.out.println("showed your patients");
+                showMessage("showed your patients");
                 break;
             case 4:
-                System.out.println("logging out");
+                showMessage("logging out");
                 controller.logOut();
                 break;
             default:
-                System.out.println("wrong");
+                showMessage("wrong");
                 break;
 
         }

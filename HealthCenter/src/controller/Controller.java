@@ -9,7 +9,7 @@ public class Controller {
     private MainView mainView;
     private DBhandler database;
     private boolean loginStatus;
-    private String adminPassword = "";
+    private String adminPassword = "Admin";
     private String[] loginInformation;
 
     public Controller() {
@@ -26,11 +26,10 @@ public class Controller {
                 
                 loginInformation = mainView.loginView(1);
                 checkDetails(loginInformation,1);
-
                 break;
             case 2:
                 loginInformation = mainView.loginView(2);
-                if (checkDetails( loginInformation, 2)) {
+                if (checkDetails(loginInformation, 2)) {
                     System.out.println("Login successful /doctor");
                     loginStatus = true;
                     while (loginStatus) {
@@ -79,19 +78,16 @@ public class Controller {
         loginStatus = false;
     }
 
-
     public void setSpec(int id, String spec) {
         database.setSpecialization(id, spec);
     }
 
-    //TODO den här fungerar men det måste ske väldigt mycket checkar av inmatningen. Annars får man
-    // felmeddelanden som bara fan.
     public boolean checkDetails(String[] details, int userType) {
-       /*n Details[0] = username, details[1]=password, userType 1 = password, userType 2 = doctor.
-        if (details.length < 2) {
-            throw new IllegalArgumentException("Details array must contain at least 2 elements: ID and password.");
+        String username = details[0];
+        String password = details[1];
+        if (details.length != 2) {
+            throw new IllegalArgumentException("Details array must contain 2 elements: ID and password.");
         }
-
 
         int userId;
         try {
@@ -99,20 +95,15 @@ public class Controller {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Ogiltigt ID-format: " + details[0]);
         }
-
-        boolean loginOk = database.authenticateUser (userId, details[1], userType);
-
-        return loginOk;
-
-        */
-    return true;}
+        return database.authenticateUser(userId, details[1], userType);
+    }
 
     public void displayAllPatients(String[] patientArray) {
         mainView.displayAllPatients(patientArray);
     }
 
     public void displayPatientByID(int id) {
-        database.getCertainPatient(id);
+        mainView.showMessageArray(database.getCertainPatient(id));
     }
 
     public void getAvailability(String docId) {

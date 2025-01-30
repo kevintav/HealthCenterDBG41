@@ -2,8 +2,6 @@ package view;
 
 import controller.Controller;
 
-import java.time.LocalDate;
-
 public class PatientView {
     private MainView mainView;
     private Controller controller;
@@ -30,13 +28,13 @@ public class PatientView {
     public void select(int index) {
         switch (index) {
             case 1:
-                signUpMenu();
+                mainView.signUpPatient();
                 break;
             case 2:
-                showMessage("information /log in");
                 if (!controller.isLoginStatus()) {
                     mainView.loginView(1);
                 }
+                mainView.getPatientID();
                 break;
             case 3:
                 showMessage("book /log in");
@@ -63,9 +61,5 @@ public class PatientView {
 
     public void showMessage(String message) {
         System.out.println(message);
-    }
-
-    private void signUpMenu() {
-        mainView.signUpPatient();
     }
 }
