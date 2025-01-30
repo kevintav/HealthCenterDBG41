@@ -85,7 +85,7 @@ public class Controller {
     //TODO den här fungerar men det måste ske väldigt mycket checkar av inmatningen. Annars får man
     // felmeddelanden som bara fan.
     public boolean checkDetails(String[] details, int userType) {
-       /*
+       /*n Details[0] = username, details[1]=password, userType 1 = password, userType 2 = doctor.
         if (details.length < 2) {
             throw new IllegalArgumentException("Details array must contain at least 2 elements: ID and password.");
         }
