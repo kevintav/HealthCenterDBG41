@@ -22,11 +22,9 @@ public class Controller {
             case 1:
                 mainView.showPatientMenu();
                 mainView.selectPatientMenu(mainView.handleSelection(1, 5));
-
-                /* Det här används för att kolla en patients information.
+                
                 String[] patientLogIn = mainView.loginView(1);
                 checkDetails(patientLogIn,1);
-                 */
                 break;
             case 2:
                 String[] doctorLogin = mainView.loginView(2);

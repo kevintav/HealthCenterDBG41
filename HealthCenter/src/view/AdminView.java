@@ -36,7 +36,6 @@ public class AdminView {
             case 3:
                 mainView.addDoctor();
                 break;
-
             case 4:
                 mainView.deleteDoctor();
                 break;

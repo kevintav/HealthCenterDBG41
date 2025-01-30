@@ -112,10 +112,8 @@ public class MainView {
     }
 
     public void signUpPatient() {
-        //TODO, fungerar inte som det ska längre
         boolean notDone = true;
         while (notDone) {
-
             showMessage("Enter your first name:");
             String f_name = scanner.nextLine();
             showMessage("Enter your last name:");
