@@ -35,7 +35,6 @@ public class MainView {
 
     public String[] loginView(int type) {
         while (true) {
-            showMessage("Opening separate window");
             JPanel panel = new JPanel();
             JLabel userLabel = new JLabel("Enter ID:");
             JLabel passLabel = new JLabel("Enter password:");
@@ -57,6 +56,7 @@ public class MainView {
                 String password = new String(passwordField.getPassword());
 
                 try {
+                    controller.logIn();
                     int userId = Integer.parseInt(username);
                     return new String[]{username, password};
                 } catch (NumberFormatException e) {
@@ -187,8 +187,6 @@ public class MainView {
         showMessage("Ange 10:30 ");
         String time4 = scanner.nextLine().trim();
         controller.setAvailability(docId, weekDay, time1, time2, time3, time4);
-
-
     }
 
     private String formatTime(String time) {

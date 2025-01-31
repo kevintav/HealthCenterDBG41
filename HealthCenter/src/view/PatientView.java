@@ -31,22 +31,13 @@ public class PatientView {
                 mainView.signUpPatient();
                 break;
             case 2:
-                if (!controller.isLoginStatus()) {
-                    mainView.loginView(1);
-                }
                 mainView.getPatientID();
                 break;
             case 3:
                 showMessage("book /log in");
-                if (!controller.isLoginStatus()) {
-                    mainView.loginView(1);
-                }
                 break;
             case 4:
                 showMessage("diagnosis /log in");
-                if (!controller.isLoginStatus()) {
-                    mainView.loginView(1);
-                }
             case 5:
                 showMessage("Returning to main menu");
                 controller.logOut();

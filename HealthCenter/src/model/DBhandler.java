@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**     All tables used in this assignment. All methods in this class except help-methods are to send querys to the database.
+/**     All tables used in this assignment. All methods in this class except help-methods are to send queries to the database.
  * //-- patient: [medicalNbr (PK), f_name, l_name, gender, tel_nr, registryDate]
  *     //-- doctor: [id (PK), name, specialization, password]
  *     //-- tendsto: [medicalNbr (FK till patient), doctorId (FK till doctor), dateAssigned]
@@ -24,7 +24,6 @@ public class DBhandler {
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
-
 
     /**
      * This method sends a query to the database to add a doctor to the doctor table.

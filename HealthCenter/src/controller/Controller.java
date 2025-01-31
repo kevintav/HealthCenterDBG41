@@ -78,6 +78,10 @@ public class Controller {
         loginStatus = false;
     }
 
+    public void logIn() {
+        loginStatus = true;
+    }
+
     public void setSpec(int id, String spec) {
         database.setSpecialization(id, spec);
     }
