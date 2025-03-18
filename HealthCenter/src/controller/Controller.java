@@ -24,7 +24,7 @@ public class Controller {
                 mainView.loginSignUpMenu();
                 int signUpOrLogin = mainView.handleSelection(1,2);
 
-                if (signUpOrLogin == 1) {  // Login
+                if (signUpOrLogin == 1) {
                     loginInformation = mainView.loginView(1);
                     boolean loginSuccess = checkDetails(loginInformation,1);
 
@@ -33,9 +33,9 @@ public class Controller {
                         int patientChoice = mainView.handleSelection(1, 5);
                         mainView.selectPatientMenu(patientChoice);
                     } else {
-                        System.out.println("Invalid login. Returning to main menu.");
+                        System.out.println("Invalid login. Returning to main menu");
                     }
-                } else if (signUpOrLogin == 2) {  // Sign Up
+                } else if (signUpOrLogin == 2) {
                     mainView.signUpPatient();
                 }
                 break;

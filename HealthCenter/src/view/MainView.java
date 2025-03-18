@@ -104,8 +104,8 @@ public class MainView {
     }
 
     public void loginSignUpMenu() {
-        showMessage("1. Sign Up");
-        showMessage("2. Login");
+        showMessage("1. Login");
+        showMessage("2. Sign Up");
     }
 
     public void signUpPatient() {
