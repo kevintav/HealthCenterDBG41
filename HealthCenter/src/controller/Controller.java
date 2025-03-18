@@ -21,11 +21,23 @@ public class Controller {
     public void setView(int index) {
         switch (index) {
             case 1:
-                mainView.showPatientMenu();
-                mainView.selectPatientMenu(mainView.handleSelection(1,5));
-                
-                loginInformation = mainView.loginView(1);
-                checkDetails(loginInformation,1);
+                mainView.loginSignUpMenu();
+                int signUpOrLogin = mainView.handleSelection(1,2);
+
+                if (signUpOrLogin == 1) {  // Login
+                    loginInformation = mainView.loginView(1);
+                    boolean loginSuccess = checkDetails(loginInformation,1);
+
+                    if (loginSuccess) {
+                        mainView.showPatientMenu();
+                        int patientChoice = mainView.handleSelection(1, 5);
+                        mainView.selectPatientMenu(patientChoice);
+                    } else {
+                        System.out.println("Invalid login. Returning to main menu.");
+                    }
+                } else if (signUpOrLogin == 2) {  // Sign Up
+                    mainView.signUpPatient();
+                }
                 break;
             case 2:
                 loginInformation = mainView.loginView(2);
@@ -87,18 +99,19 @@ public class Controller {
     }
 
     public boolean checkDetails(String[] details, int userType) {
-        String username = details[0];
-        String password = details[1];
         if (details.length != 2) {
-            throw new IllegalArgumentException("Details array must contain 2 elements: ID and password.");
+            System.out.println("Invalid input. Please enter both ID and password.");
+            return false;
         }
 
         int userId;
         try {
-            userId = Integer.parseInt(details[0]);
+            userId = Integer.parseInt(details[0]); // Ensure ID is a number
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Ogiltigt ID-format: " + details[0]);
+            System.out.println("Invalid ID format. Please enter numbers only.");
+            return false;
         }
+
         return database.authenticateUser(userId, details[1], userType);
     }
 
@@ -106,8 +119,8 @@ public class Controller {
         mainView.displayAllPatients(patientArray);
     }
 
-    public void displayPatientByID(int id) {
-        mainView.showMessageArray(database.getCertainPatient(id));
+    public void displayPatientByID(String[] patientInformation) {
+        mainView.showMessageArray(database.getCertainPatient(Integer.parseInt(patientInformation[0])));
     }
 
     public void getAvailability(String docId) {
@@ -136,4 +149,23 @@ public class Controller {
     public boolean isLoginStatus() {
         return loginStatus;
     }
+
+    public String[] getLoginInformation() {
+        return loginInformation;
+    }
+
+    public void setLoginInformation(String[] loginInformation) {
+        this.loginInformation = loginInformation;
+    }
+
+    public void signUpOrLogin(int type) {
+        if (type == 1) {
+
+        }
+    }
+
+    public void handleBooking(int medicalNbr, int doctorId, LocalDate appointmentDate, String appointmentTime) {
+        database.bookAppointment(medicalNbr, doctorId, appointmentDate, appointmentTime);
+    }
+
 }

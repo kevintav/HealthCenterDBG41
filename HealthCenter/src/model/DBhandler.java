@@ -1,7 +1,9 @@
 package model;
 
 import java.sql.*;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -523,24 +525,66 @@ public class DBhandler {
      * @param appointmentTime
      */
     public void bookAppointment(int medicalNbr, int doctorId, LocalDate appointmentDate, String appointmentTime) {
-        String sql = "INSERT INTO appointment (medicalNbr, doctorId, appointmentDate, appointmentTime) VALUES (?, ?, ?, ?)";
+        // Ensure booking is only allowed on Fridays
+        if (LocalDate.now().getDayOfWeek() != DayOfWeek.FRIDAY) {
+            System.out.println("Appointments can only be booked on Fridays.");
+            return;
+        }
 
-        try (Connection connection = getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
+        // Ensure the doctor is available at the requested time
+        if (!isDoctorAvailable(doctorId, appointmentDate.getDayOfWeek().toString(), appointmentTime)) {
+            System.out.println("Doctor is not available at the selected time.");
+            return;
+        }
 
-            stmt.setInt(1, medicalNbr);
-            stmt.setInt(2, doctorId);
-            stmt.setDate(3, java.sql.Date.valueOf(appointmentDate));
-            stmt.setString(4, appointmentTime);
+        String sql = "INSERT INTO appointment (medicalNbr, doctorId, appointmentDate, appointmentTime, bookingTime) VALUES (?, ?, ?, ?, ?)";
 
-            int rowsAffected = stmt.executeUpdate();
-            System.out.println(rowsAffected + " rows added.");
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false); // Start transaction
+
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setInt(1, medicalNbr);
+                stmt.setInt(2, doctorId);
+                stmt.setDate(3, java.sql.Date.valueOf(appointmentDate));
+                stmt.setString(4, appointmentTime);
+                stmt.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now())); // Record booking time
+
+                int rowsAffected = stmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    connection.commit(); // Commit transaction
+                    System.out.println("Appointment booked successfully.");
+                } else {
+                    connection.rollback(); // Rollback if insert fails
+                    System.out.println("Appointment booking failed.");
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    public void getTotalVisitCost() {
+        String sql = "SELECT p.medicalNbr, p.f_name, p.l_name, SUM(v.visit_cost) AS total_cost " +
+                "FROM patient p " +
+                "JOIN appointment a ON p.medicalNbr = a.medicalNbr " +
+                "JOIN doctor d ON a.doctorId = d.id " +
+                "JOIN visit_costs v ON d.specialization = v.specialization " +
+                "GROUP BY p.medicalNbr, p.f_name, p.l_name " +
+                "ORDER BY total_cost DESC";
 
+        try (Connection connection = getConnection();
+             Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
 
-
+            System.out.println("Total Visit Costs Per Patient:");
+            while (rs.next()) {
+                int medicalNbr = rs.getInt("medicalNbr");
+                String fullName = rs.getString("f_name") + " " + rs.getString("l_name");
+                double totalCost = rs.getDouble("total_cost");
+                System.out.println("Patient: " + fullName + " (ID: " + medicalNbr + ") - Total Cost: $" + totalCost);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

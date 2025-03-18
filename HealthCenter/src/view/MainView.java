@@ -88,14 +88,24 @@ public class MainView {
     }
 
     public int handleSelection(int min, int max) {
-        int selection = scanner.nextInt();
-        scanner.nextLine(); //consumes the leftover newline
-
-        if (selection < min || selection > max) {
-            showMessage("Invalid menu choice");
-            return -1;
+        int choice;
+        while (true) {
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+                if (choice >= min && choice <= max) {
+                    return choice;
+                } else {
+                    System.out.println("Invalid selection. Please choose between "+min+" and "+max);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number");
+            }
         }
-        return selection;
+    }
+
+    public void loginSignUpMenu() {
+        showMessage("1. Sign Up");
+        showMessage("2. Login");
     }
 
     public void signUpPatient() {
@@ -333,10 +343,5 @@ public class MainView {
         for (String info : array) {
             showMessage(info);
         }
-    }
-
-    public void getPatientID() {
-        showMessage("Enter MedicalNbr of patient:");
-        controller.displayPatientByID(scanner.nextInt());
     }
 }
