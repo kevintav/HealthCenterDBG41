@@ -28,10 +28,10 @@ public class PatientView {
     public void select(int index) {
         switch (index) {
             case 1:
-                mainView.signUpPatient();
+                controller.displayPatientByID(controller.getLoginInformation());
                 break;
             case 2:
-                mainView.getPatientID();
+                mainView.signUpPatient();
                 break;
             case 3:
                 showMessage("book /log in");
