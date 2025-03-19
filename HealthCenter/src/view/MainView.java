@@ -149,23 +149,20 @@ public class MainView {
         }
     }
 
+    //HAR ÄNDRAT ALLA DESSA FÖR ATT VARA ENKLARE ATT HANTERA
     public void showPatientMenu() {
         patientView.showMenu();
         patientView.handleSelection();
     }
-
+    //HAR ÄNDRAT ALLA DESSA FÖR ATT VARA ENKLARE ATT HANTERA
     public void showDocMenu() {
         docView.showMenu();
         docView.handleSelection();
     }
-
+    //HAR ÄNDRAT ALLA DESSA FÖR ATT VARA ENKLARE ATT HANTERA
     public void showAdminMenu() {
         adminView.showMenu();
         adminView.handleSelection();
-    }
-
-    public boolean isLoggedOut() {
-        return docView.isLoggedOut();
     }
 
     public void showMessage(String message) {

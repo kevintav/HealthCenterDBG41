@@ -43,6 +43,8 @@ public class DoctorView {
         }
     }
 
+
+
     public void showMessage(String message) {
         System.out.println(message);
     }

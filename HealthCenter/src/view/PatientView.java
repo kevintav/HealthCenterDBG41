@@ -26,28 +26,13 @@ public class PatientView {
                 break;
             case 2:
                 bookAppointment();
-                int chosen = mainView.handleSelection(1, 3);
-                switch (chosen) {
-                    case 1:
-                        controller.getAvailability(String.valueOf(1));
-                        break;
-                    case 2:
-                        controller.getAvailability(String.valueOf(2));
-                        break;
-                    case 3:
-                        controller.getAvailability(String.valueOf(3));
-                        break;
-                    default:
-                        break;
-                }
                 break;
             case 3:
+                //SE MEDICAL RECORD //TODO kanske lägga till diagnos?
                 controller.viewMedicalRecordsForPatient();
                 break;
             case 4:
                 showMessage("Returning to main menu");
-                mainView.showMainMenu();
-                controller.setView(mainView.handleSelection(1, 9));
                 break;
             default:
                 showMessage("Wrong input");
@@ -60,11 +45,23 @@ public class PatientView {
         showMessage("1. Ortoped");
         showMessage("2. Onkolog");
         showMessage("3. Pediatriker");
+
+        int chosen = mainView.handleSelection(1, 3);
+        switch (chosen) {
+            case 1:
+                controller.getAvailability(String.valueOf(1));
+                break;
+            case 2:
+                controller.getAvailability(String.valueOf(2));
+                break;
+            case 3:
+                controller.getAvailability(String.valueOf(3));
+                break;
+            default:
+                break;
+        }
     }
 
-    public void seeDiagnosis() {
-        // Implementation for seeing diagnosis
-    }
 
     public void showMessage(String message) {
         System.out.println(message);
