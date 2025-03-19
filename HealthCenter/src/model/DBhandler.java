@@ -514,6 +514,40 @@ public class DBhandler {
         }
     }
 
+    public static String[] getMedicalRecordsForPatient(int medicalNbr) {
+        List<String> recordsList = new ArrayList<>();
+        String sql = "SELECT * FROM medicalRecord WHERE medicalNbr = ?";
+
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setInt(1, medicalNbr);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int doctorId = rs.getInt("doctorId");
+                String diagnosis = rs.getString("diagnosis");
+                String description = rs.getString("description");
+                String prescription = rs.getString("prescription");
+                LocalDate visitDate = rs.getDate("visitDate").toLocalDate();
+
+                recordsList.add("Läkare ID: " + doctorId);
+                recordsList.add("Diagnos: " + diagnosis);
+                recordsList.add("Beskrivning: " + description);
+                recordsList.add("Recept: " + prescription);
+                recordsList.add("Besöksdatum: " + visitDate);
+                recordsList.add("---------------------------");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return recordsList.toArray(new String[0]);
+    }
+
+
+
+
     //TODO
     // APPOINTMENT TABLE
 

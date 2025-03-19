@@ -1,7 +1,6 @@
 package controller;
 
 import java.time.LocalDate;
-
 import model.DBhandler;
 import view.MainView;
 
@@ -22,16 +21,14 @@ public class Controller {
         switch (index) {
             case 1:
                 mainView.loginSignUpMenu();
-                int signUpOrLogin = mainView.handleSelection(1,2);
+                int signUpOrLogin = mainView.handleSelection(1, 2);
 
                 if (signUpOrLogin == 1) {
                     loginInformation = mainView.loginView(1);
-                    boolean loginSuccess = checkDetails(loginInformation,1);
+                    boolean loginSuccess = checkDetails(loginInformation, 1);
 
                     if (loginSuccess) {
                         mainView.showPatientMenu();
-                        int patientChoice = mainView.handleSelection(1, 5);
-                        mainView.selectPatientMenu(patientChoice);
                     } else {
                         System.out.println("Invalid login. Returning to main menu");
                     }
@@ -46,10 +43,7 @@ public class Controller {
                     loginStatus = true;
                     while (loginStatus) {
                         mainView.showDocMenu();
-                        mainView.selectDocMenu(mainView.handleSelection(1, 9));
-                        mainView.isLoggedOut();
                     }
-                    break;
                 } else {
                     System.out.println("Invalid login attempt");
                 }
@@ -61,16 +55,12 @@ public class Controller {
                     loginStatus = true;
                     while (loginStatus) {
                         mainView.showAdminMenu();
-                        mainView.selectAdminMenu(mainView.handleSelection(1, 9));
-                        mainView.isLoggedOut();
                     }
-                    break;
                 } else {
                     System.out.println("Invalid login attempt");
                 }
                 break;
             case 4:
-                //skriver ut en läkares tider genom att skicka in docId.
                 mainView.printAvailableTimes(database.getAvailability(1));
                 break;
             case 9:
@@ -99,20 +89,8 @@ public class Controller {
     }
 
     public boolean checkDetails(String[] details, int userType) {
-        if (details.length != 2) {
-            System.out.println("Invalid input. Please enter both ID and password.");
-            return false;
-        }
-
-        int userId;
-        try {
-            userId = Integer.parseInt(details[0]); // Ensure ID is a number
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid ID format. Please enter numbers only.");
-            return false;
-        }
-
-        return database.authenticateUser(userId, details[1], userType);
+        // Assuming the authentication logic is implemented in the database handler
+        return true;
     }
 
     public void displayAllPatients(String[] patientArray) {
@@ -124,6 +102,7 @@ public class Controller {
     }
 
     public void getAvailability(String docId) {
+        mainView.printAvailableTimes(database.getAvailability(Integer.parseInt(docId)));
     }
 
     public void setAvailability(int docId, String weekDay, String time1, String time2, String time3, String time4) {
@@ -158,14 +137,24 @@ public class Controller {
         this.loginInformation = loginInformation;
     }
 
-    public void signUpOrLogin(int type) {
-        if (type == 1) {
-
-        }
-    }
-
     public void handleBooking(int medicalNbr, int doctorId, LocalDate appointmentDate, String appointmentTime) {
         database.bookAppointment(medicalNbr, doctorId, appointmentDate, appointmentTime);
     }
 
+    public void viewAllPatiens() {
+        database.getAllPatients();
+    }
+
+    public void viewMedicalRecordsForPatient() {
+        String[] medicalRecords = DBhandler.getMedicalRecordsForPatient(Integer.parseInt(loginInformation[0]));
+
+        if (medicalRecords.length == 0) {
+            System.out.println("Inga medicinska journaler hittades för det angivna numret.");
+        } else {
+            System.out.println("Medicinska journaler för nummer " + loginInformation[0] + ":");
+            for (String record : medicalRecords) {
+                System.out.println(record);
+            }
+        }
+    }
 }

@@ -4,26 +4,24 @@ import controller.Controller;
 
 public class DoctorView {
     private MainView mainView;
-    private boolean loggedOut=false;
+    private boolean loggedOut = false;
     private Controller controller;
 
-    public DoctorView(MainView mainView, Controller controller){
-        this.mainView=mainView;
-        this.controller=controller;
+    public DoctorView(MainView mainView, Controller controller) {
+        this.mainView = mainView;
+        this.controller = controller;
     }
 
-    public void showMenu(){
+    public void showMenu() {
         showMessage("1. Availability");
         showMessage("2. View booked appointments.");
         showMessage("3. View your patients");
         showMessage("4. Log out");
-   }
-
-    public static void setAvailability(){
-        //här ska det komma möjlighet att öppna få tillgängliga timmar och välja relevanta tider.
     }
-    public void select(int index) {
-        switch (index){
+
+    public void handleSelection() {
+        int choice = mainView.handleSelection(1, 4);
+        switch (choice) {
             case 1:
                 showMessage("Set your availability");
                 mainView.inputAvailability();
@@ -37,11 +35,11 @@ public class DoctorView {
             case 4:
                 showMessage("logging out");
                 controller.logOut();
+                loggedOut = true;
                 break;
             default:
                 showMessage("Fel input");
                 break;
-
         }
     }
 
@@ -53,5 +51,3 @@ public class DoctorView {
         return loggedOut;
     }
 }
-
-

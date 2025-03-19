@@ -1,4 +1,5 @@
 package view;
+
 import controller.Controller;
 
 public class AdminView {
@@ -9,13 +10,6 @@ public class AdminView {
         this.mainView = mainView;
         this.controller = controller;
     }
-
-    //TODO
-    // Add a list of specialization of its doctors such as dentist, cardiologist, or psychiatrists, and their visit cost;
-
-    //TODO
-    // Add the information about the health center’s doctors, including employee number, full name, one specialization for each doctor, and
-    // phone. Admin can also delete a doctor from the health center.
 
     public void showMenu() {
         showMessage("Admin Menu:");
@@ -29,8 +23,9 @@ public class AdminView {
         showMessage("8. Logout");
     }
 
-    public void selectView(int index) {
-        switch (index) {
+    public void handleSelection() {
+        int choice = mainView.handleSelection(1, 8);
+        switch (choice) {
             case 1:
                 mainView.addDoctor();
                 break;
@@ -41,16 +36,16 @@ public class AdminView {
                 mainView.setSpec();
                 break;
             case 4:
-                //mainView.viewAllPatients();
+                mainView.viewAllPatients();
                 break;
             case 5:
-                //mainView.viewAllAppointments();
+                mainView.viewAllAppointments();
                 break;
             case 6:
-                //mainView.viewPatientMedicalRecords();
+                mainView.viewPatientMedicalRecords();
                 break;
             case 7:
-                //controller.displayTotalVisitCost();
+                // controller.displayTotalVisitCost();
                 break;
             case 8:
                 showMessage("Logging out...");
@@ -63,5 +58,4 @@ public class AdminView {
     public void showMessage(String message) {
         System.out.println(message);
     }
-
 }

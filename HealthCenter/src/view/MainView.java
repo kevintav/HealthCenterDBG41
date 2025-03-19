@@ -68,6 +68,7 @@ public class MainView {
             }
         }
     }
+
     public String adminLogin() {
         showMessage("Opening separate window");
         JPanel panel = new JPanel();
@@ -95,7 +96,7 @@ public class MainView {
                 if (choice >= min && choice <= max) {
                     return choice;
                 } else {
-                    System.out.println("Invalid selection. Please choose between "+min+" and "+max);
+                    System.out.println("Invalid selection. Please choose between " + min + " and " + max);
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a valid number");
@@ -150,26 +151,17 @@ public class MainView {
 
     public void showPatientMenu() {
         patientView.showMenu();
-    }
-
-    public void selectPatientMenu(int index) {
-        patientView.select(index);
+        patientView.handleSelection();
     }
 
     public void showDocMenu() {
         docView.showMenu();
-    }
-
-    public void selectDocMenu(int index) {
-        docView.select(index);
+        docView.handleSelection();
     }
 
     public void showAdminMenu() {
         adminView.showMenu();
-    }
-
-    public void selectAdminMenu(int index) {
-        adminView.selectView(index);
+        adminView.handleSelection();
     }
 
     public boolean isLoggedOut() {
@@ -181,8 +173,6 @@ public class MainView {
     }
 
     public void inputAvailability() {
-
-
         showMessage("Ange ditt docID: ");
         int docId = scanner.nextInt();
         scanner.nextLine();
@@ -305,7 +295,7 @@ public class MainView {
     }
 
     public void configureCosts() {
-
+        // Implementation for configuring costs
     }
 
     public void addDoctor() {
@@ -343,5 +333,17 @@ public class MainView {
         for (String info : array) {
             showMessage(info);
         }
+    }
+
+    public void viewAllPatients() {
+        controller.viewAllPatiens();
+    }
+
+    public void viewAllAppointments() {
+        // Implementation for viewing all appointments
+    }
+
+    public void viewPatientMedicalRecords() {
+        // Implementation for viewing patient medical records
     }
 }

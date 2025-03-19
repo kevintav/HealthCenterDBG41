@@ -12,42 +12,58 @@ public class PatientView {
     }
 
     public void showMenu() {
-        showMessage("1. Sign up");
-        showMessage("2. See your information (requires log in)");
-        showMessage("3. Book appointment (requires log in)");
-        showMessage("4. See your diagnosis/prescription (requires log in)");
-        showMessage("5. Go back");
+        showMessage("1. See your information");
+        showMessage("2. Book appointment");
+        showMessage("3. See your diagnosis/prescription");
+        showMessage("4. Go back (Log out)");
     }
 
-    public void bookAppointment() {
-    }
-
-    public void seeDiagnosis() {
-    }
-
-    public void select(int index) {
-        switch (index) {
+    public void handleSelection() {
+        int choice = mainView.handleSelection(1, 4);
+        switch (choice) {
             case 1:
                 controller.displayPatientByID(controller.getLoginInformation());
                 break;
             case 2:
-                mainView.signUpPatient();
+                bookAppointment();
+                int chosen = mainView.handleSelection(1, 3);
+                switch (chosen) {
+                    case 1:
+                        controller.getAvailability(String.valueOf(1));
+                        break;
+                    case 2:
+                        controller.getAvailability(String.valueOf(2));
+                        break;
+                    case 3:
+                        controller.getAvailability(String.valueOf(3));
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case 3:
-                showMessage("book /log in");
+                controller.viewMedicalRecordsForPatient();
                 break;
             case 4:
-                showMessage("diagnosis /log in");
-            case 5:
                 showMessage("Returning to main menu");
-                controller.logOut();
-                controller.setView(mainView.handleSelection(1,9));
+                mainView.showMainMenu();
+                controller.setView(mainView.handleSelection(1, 9));
                 break;
             default:
                 showMessage("Wrong input");
                 break;
-
         }
+    }
+
+    public void bookAppointment() {
+        showMessage("Vilken typ av läkare vill du träffa?");
+        showMessage("1. Ortoped");
+        showMessage("2. Onkolog");
+        showMessage("3. Pediatriker");
+    }
+
+    public void seeDiagnosis() {
+        // Implementation for seeing diagnosis
     }
 
     public void showMessage(String message) {
