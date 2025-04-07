@@ -2,68 +2,93 @@ package view;
 
 import controller.Controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.Scanner;
+
 public class PatientView {
-    private MainView mainView;
-    private Controller controller;
+    private final Scanner scanner = new Scanner(System.in);
+    private final MainView mainView;
+    private final Controller controller;
 
     public PatientView(MainView mainView, Controller controller) {
-        this.controller = controller;
         this.mainView = mainView;
+        this.controller = controller;
     }
 
     public void showMenu() {
-        showMessage("1. See your information");
-        showMessage("2. Book appointment");
-        showMessage("3. See your diagnosis/prescription");
-        showMessage("4. Go back (Log out)");
+        mainView.showMessage("\n-- Patient Menu --");
+        mainView.showMessage("1. View & Edit Personal Info");
+        mainView.showMessage("2. Search Doctors by Specialization");
+        mainView.showMessage("3. View Doctor Availability");
+        mainView.showMessage("4. Book Appointment");
+        mainView.showMessage("5. View My Medical Records");
+        mainView.showMessage("6. Logout");
     }
 
     public void handleSelection() {
-        int choice = mainView.handleSelection(1, 4);
+        int choice = mainView.handleSelection(1, 6);
         switch (choice) {
-            case 1:
-                controller.displayPatientByID(controller.getLoginInformation());
-                break;
-            case 2:
-                bookAppointment();
-                break;
-            case 3:
-                //SE MEDICAL RECORD //TODO kanske lägga till diagnos?
-                controller.viewMedicalRecordsForPatient();
-                break;
-            case 4:
-                showMessage("Returning to main menu");
-                break;
-            default:
-                showMessage("Wrong input");
-                break;
+            case 1 -> viewOrEditPersonalInfo();
+            case 2 -> searchDoctors();
+            case 3 -> viewDoctorAvailability();
+            case 4 -> bookAppointment();
+            case 5 -> viewMyMedicalRecords();
+            case 6 -> controller.logOut();
         }
     }
 
-    public void bookAppointment() {
-        showMessage("Vilken typ av läkare vill du träffa?");
-        showMessage("1. Ortoped");
-        showMessage("2. Onkolog");
-        showMessage("3. Pediatriker");
+    private void viewOrEditPersonalInfo() {
+        String[] info = controller.getPatientById(Integer.parseInt(controller.getLoginInformation()[0]));
+        for (String s : info) mainView.showMessage(s);
 
-        int chosen = mainView.handleSelection(1, 3);
-        switch (chosen) {
-            case 1:
-                controller.getAvailability(String.valueOf(1));
-                break;
-            case 2:
-                controller.getAvailability(String.valueOf(2));
-                break;
-            case 3:
-                controller.getAvailability(String.valueOf(3));
-                break;
-            default:
-                break;
+        mainView.showMessage("Do you want to edit phone and address? (Y/N)");
+        String input = scanner.nextLine().trim().toUpperCase();
+        if (input.equals("Y")) {
+            System.out.print("New Phone: ");
+            String phone = scanner.nextLine();
+            System.out.print("New Address: ");
+            String address = scanner.nextLine();
+            controller.updatePatientInfo(Integer.parseInt(info[0]), Integer.parseInt(phone), address);
+            mainView.showMessage("Information updated.");
         }
     }
 
+    private void searchDoctors() {
+        System.out.print("Enter specialization code (e.g., Pe, Or): ");
+        String spec = scanner.nextLine();
+        controller.showAllDoctors(); // For simplicity now; can filter if needed.
+    }
 
-    public void showMessage(String message) {
-        System.out.println(message);
+    private void viewDoctorAvailability() {
+        System.out.print("Enter Doctor ID to view availability: ");
+        int docId = Integer.parseInt(scanner.nextLine());
+        mainView.printAvailableTimes(controller.getDoctorAvailability(docId));
+    }
+
+    private void bookAppointment() {
+        System.out.print("Enter Doctor ID: ");
+        int docId = Integer.parseInt(scanner.nextLine());
+        System.out.print("Enter appointment date (YYYY-MM-DD): ");
+        LocalDate date;
+        try {
+            date = LocalDate.parse(scanner.nextLine());
+        } catch (DateTimeParseException e) {
+            mainView.showMessage("Invalid date.");
+            return;
+        }
+        System.out.print("Enter appointment time (e.g., 09:00): ");
+        String time = scanner.nextLine();
+
+        controller.bookAppointment(Integer.parseInt(controller.getLoginInformation()[0]), docId, date, time);
+    }
+
+    private void viewMyMedicalRecords() {
+        String[] records = controller.getMedicalRecordsForLoggedInPatient();
+        if (records.length == 0) {
+            mainView.showMessage("No medical records found.");
+        } else {
+            for (String rec : records) mainView.showMessage(rec);
+        }
     }
 }
