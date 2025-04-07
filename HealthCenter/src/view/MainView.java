@@ -292,8 +292,39 @@ public class MainView {
     }
 
     public void configureCosts() {
-        // Implementation for configuring costs
+        while (true) {
+            showMessage("Konfigurera kostnader:");
+            showMessage("1. Pediatrician (Pe)");
+            showMessage("2. Oncologist (On)");
+            showMessage("3. Proctologist (Pr)");
+            showMessage("4. Orthopedist (Or)");
+            showMessage("5. Tillbaka till huvudmenyn");
+
+            int choice = handleSelection(1, 5);
+            if (choice == 5) return;
+
+            showMessage("Ange ny kostnad i SEK:");
+            if (scanner.hasNextInt()) {
+                int cost = scanner.nextInt();
+                scanner.nextLine();
+
+                String code = switch (choice) {
+                    case 1 -> "Pe";
+                    case 2 -> "On";
+                    case 3 -> "Pr";
+                    case 4 -> "Or";
+                    default -> "";
+                };
+                //TODO controller.setCost(code, cost);
+                //
+                showMessage("Kostnad uppdaterad för " + code);
+            } else {
+                showMessage("Felaktig inmatning. Försök igen.");
+                scanner.nextLine();
+            }
+        }
     }
+
 
     public void addDoctor() {
         showMessage("Ange information för den nya läkaren:");
@@ -337,10 +368,59 @@ public class MainView {
     }
 
     public void viewAllAppointments() {
-        // Implementation for viewing all appointments
+        showMessage("Alla tillgängliga läkare:");
+        controller.displayAllDoctors();
+
+        showMessage("Ange ID på läkare vars tider du vill se:");
+        int docId = -1;
+
+        while (true) {
+            if (scanner.hasNextInt()) {
+                docId = scanner.nextInt();
+                scanner.nextLine();
+                break;
+            } else {
+                showMessage("Felaktig inmatning. Ange ett giltigt heltal.");
+                scanner.nextLine();
+            }
+        }
+
+        String[] appointments = controller.getAppointmentsByDoctor(docId);
+        if (appointments != null && appointments.length > 0) {
+            showMessage("Bokade tider för läkare med ID: " + docId);
+            showMessageArray(appointments);
+        } else {
+            showMessage("Inga bokningar hittades för denna läkare.");
+        }
     }
 
+
     public void viewPatientMedicalRecords() {
-        // Implementation for viewing patient medical records
+        showMessage("Lista över patienter:");
+        controller.viewAllPatiens();
+
+        showMessage("Ange patientens ID för att visa journal:");
+        int patientId = -1;
+
+        while (true) {
+            if (scanner.hasNextInt()) {
+                patientId = scanner.nextInt();
+                scanner.nextLine();
+                break;
+            } else {
+                showMessage("Felaktig inmatning. Ange ett giltigt heltal.");
+                scanner.nextLine();
+            }
+        }
+
+            String[] records = controller.viewMedicalRecordsForPatient(Integer.parseInt(String.valueOf(patientId)));
+        if (records != null && records.length > 0) {
+            showMessage("Medicinsk journal för patient " + patientId + ":");
+            showMessageArray(records);
+            //TODO HÄR SKA VI LÄGGA TILL EN KALKYL PÅ TOTALCOST FÖR JUST DEN HÄR PATIENTEN OCKSÅ
+        } else {
+            showMessage("Ingen journal hittades för den patienten.");
+        }
     }
+
 }

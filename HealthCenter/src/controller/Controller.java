@@ -1,6 +1,8 @@
 package controller;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+
 import model.DBhandler;
 import view.MainView;
 
@@ -163,4 +165,12 @@ public class Controller {
             }
         }
     }
+    public String[] viewMedicalRecordsForPatient(int medicalID) {
+return DBhandler.getMedicalRecordsForPatient(medicalID);
+    }
+
+    public String[] getAppointmentsByDoctor(int docId) {
+        //TODO FORMATTERING AV SVARET
+        System.out.println(Arrays.deepToString(database.getAvailability(docId)));
+    return null;}
 }

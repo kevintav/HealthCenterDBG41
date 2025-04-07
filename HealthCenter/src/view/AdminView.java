@@ -17,14 +17,13 @@ public class AdminView {
         showMessage("2. Delete Doctor");
         showMessage("3. Set Doctor Specialization");
         showMessage("4. View All Patients");
-        showMessage("5. View All Appointments");
+        showMessage("5. View all Appointments of a specfic Doctor");
         showMessage("6. View Patient Medical Records");
-        showMessage("7. View Total Visit Cost per Patient");
-        showMessage("8. Logout");
+        showMessage("7. Logout");
     }
 
     public void handleSelection() {
-        int choice = mainView.handleSelection(1, 8);
+        int choice = mainView.handleSelection(1, 7);
         switch (choice) {
             case 1:
                 mainView.addDoctor();
@@ -45,9 +44,6 @@ public class AdminView {
                 mainView.viewPatientMedicalRecords();
                 break;
             case 7:
-                // controller.displayTotalVisitCost();
-                break;
-            case 8:
                 showMessage("Logging out...");
                 break;
             default:
