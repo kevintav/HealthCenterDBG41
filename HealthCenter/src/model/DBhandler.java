@@ -104,11 +104,37 @@ public class DBhandler {
     }
 
     public void deleteDoctor(int id) {
-        String sql = "DELETE FROM doctor WHERE id=?";
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            stmt.executeUpdate();
+        String deleteAvailability = "DELETE FROM availability WHERE docId = ?";
+        String deleteAppointments = "DELETE FROM appointment WHERE doctorId = ?";
+        String deleteTendsto = "DELETE FROM tendsto WHERE doctorId = ?";
+        String deleteDoctor = "DELETE FROM doctor WHERE id = ?";
+
+        try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement stmt1 = conn.prepareStatement(deleteAvailability);
+                 PreparedStatement stmt2 = conn.prepareStatement(deleteAppointments);
+                 PreparedStatement stmt3 = conn.prepareStatement(deleteTendsto);
+                 PreparedStatement stmt4 = conn.prepareStatement(deleteDoctor)) {
+
+                stmt1.setInt(1, id);
+                stmt1.executeUpdate();
+
+                stmt2.setInt(1, id);
+                stmt2.executeUpdate();
+
+                stmt3.setInt(1, id);
+                stmt3.executeUpdate();
+
+                stmt4.setInt(1, id);
+                int affected = stmt4.executeUpdate();
+
+                conn.commit();
+                System.out.println(affected + " doctor(s) deleted.");
+            } catch (SQLException e) {
+                conn.rollback();
+                e.printStackTrace();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
