@@ -57,7 +57,7 @@ public class PatientView {
     private void searchDoctors() {
         System.out.print("Enter specialization code (e.g., Pe, Or): ");
         String spec = scanner.nextLine();
-        controller.showAllDoctors(); // For simplicity now; can filter if needed.
+        controller.showAllDoctors();
     }
 
     private void viewDoctorAvailability() {
