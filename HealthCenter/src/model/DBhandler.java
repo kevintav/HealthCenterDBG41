@@ -15,8 +15,6 @@ public class DBhandler {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    // ---------------------- PATIENT ----------------------
-
     public void addPatient(String fName, String lName, String gender, String address, int telNbr, LocalDate birthDate, String password) {
         String sql = "INSERT INTO patient (f_name, l_name, gender, address, tel_nr, birthdate, registry, pw) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -55,8 +53,8 @@ public class DBhandler {
         String[] info = new String[8];
         String sql = "SELECT * FROM patient WHERE medicalNbr = ?";
 
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -88,8 +86,6 @@ public class DBhandler {
         }
     }
 
-    // ---------------------- DOCTOR ----------------------
-
     public void addDoctor(int id, String fullName, String spec) {
         String sql = "INSERT INTO doctor (id, fullname, spec) VALUES (?, ?, ?)";
         try (Connection conn = getConnection();
@@ -109,13 +105,13 @@ public class DBhandler {
         String deleteTendsto = "DELETE FROM tendsto WHERE doctorId = ?";
         String deleteDoctor = "DELETE FROM doctor WHERE id = ?";
 
-        try (Connection conn = getConnection()) {
-            conn.setAutoCommit(false);
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false);
 
-            try (PreparedStatement stmt1 = conn.prepareStatement(deleteAvailability);
-                 PreparedStatement stmt2 = conn.prepareStatement(deleteAppointments);
-                 PreparedStatement stmt3 = conn.prepareStatement(deleteTendsto);
-                 PreparedStatement stmt4 = conn.prepareStatement(deleteDoctor)) {
+            try (PreparedStatement stmt1 = connection.prepareStatement(deleteAvailability);
+                 PreparedStatement stmt2 = connection.prepareStatement(deleteAppointments);
+                 PreparedStatement stmt3 = connection.prepareStatement(deleteTendsto);
+                 PreparedStatement stmt4 = connection.prepareStatement(deleteDoctor)) {
 
                 stmt1.setInt(1, id);
                 stmt1.executeUpdate();
@@ -129,10 +125,10 @@ public class DBhandler {
                 stmt4.setInt(1, id);
                 int affected = stmt4.executeUpdate();
 
-                conn.commit();
+                connection.commit();
                 System.out.println(affected + " doctor(s) deleted.");
             } catch (SQLException e) {
-                conn.rollback();
+                connection.rollback();
                 e.printStackTrace();
             }
         } catch (SQLException e) {
@@ -178,8 +174,6 @@ public class DBhandler {
         }
     }
 
-    // ---------------------- AUTH ----------------------
-
     public boolean authenticateUser(int id, String password, int type) {
         String sql = (type == 1) ? "SELECT pw FROM patient WHERE medicalNbr = ?" : "SELECT password FROM doctor WHERE id = ?";
         try (Connection conn = getConnection();
@@ -194,8 +188,6 @@ public class DBhandler {
         }
         return false;
     }
-
-    // ---------------------- AVAILABILITY ----------------------
 
     public boolean setAvailability(int docId, String day, String t1, String t2, String t3, String t4) {
         String check = "SELECT COUNT(*) FROM availability WHERE docId = ? AND weekDay = ?";
@@ -258,8 +250,8 @@ public class DBhandler {
         return result;
     }
 
-    private String getWeekdayName(String dayNum) {
-        return switch (dayNum) {
+    private String getWeekdayName(String dayNumber) {
+        return switch (dayNumber) {
             case "1" -> "Monday";
             case "2" -> "Tuesday";
             case "3" -> "Wednesday";
@@ -270,8 +262,6 @@ public class DBhandler {
             default -> "Unknown";
         };
     }
-
-    // ---------------------- APPOINTMENTS ----------------------
 
     public void bookAppointment(int medNbr, int docId, LocalDate date, String time) {
         if (!LocalDate.now().getDayOfWeek().name().equals("FRIDAY")) {
@@ -298,8 +288,8 @@ public class DBhandler {
         List<String> results = new ArrayList<>();
         String sql = "SELECT a.medicalNbr, a.appointmentDate, a.appointmentTime, p.f_name, p.l_name FROM appointment a JOIN patient p ON a.medicalNbr = p.medicalNbr WHERE a.doctorId = ? ORDER BY a.appointmentDate, a.appointmentTime";
 
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, docId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -312,14 +302,13 @@ public class DBhandler {
         return results.toArray(new String[0]);
     }
 
-    // ---------------------- PATIENTS FOR DOCTOR ----------------------
 
     public String[] getPatientsOfDoctor(int docId) {
         List<String> patients = new ArrayList<>();
         String sql = "SELECT DISTINCT p.medicalNbr, p.f_name, p.l_name FROM patient p JOIN appointment a ON p.medicalNbr = a.medicalNbr WHERE a.doctorId = ?";
 
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, docId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -331,13 +320,12 @@ public class DBhandler {
         return patients.toArray(new String[0]);
     }
 
-    // ---------------------- MEDICAL RECORD ----------------------
 
     public void addMedicalRecord(int medNbr, int docId, String diagnosis, String desc, String prescription, LocalDate visitDate) {
         String sql = "INSERT INTO medicalRecord (medicalNbr, doctorId, diagnosis, description, prescription, visitDate) VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, medNbr);
             stmt.setInt(2, docId);
             stmt.setString(3, diagnosis);
@@ -351,14 +339,14 @@ public class DBhandler {
     }
 
     public static String[] getMedicalRecordsForPatient(int medicalNbr) {
-        List<String> records = new ArrayList<>();
+        List<String> medicalRecords = new ArrayList<>();
         String sql = "SELECT * FROM medicalRecord WHERE medicalNbr = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, medicalNbr);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                records.add("Doctor ID: " + rs.getInt("doctorId") +
+                medicalRecords.add("Doctor ID: " + rs.getInt("doctorId") +
                         ", Diagnosis: " + rs.getString("diagnosis") +
                         ", Description: " + rs.getString("description") +
                         ", Prescription: " + rs.getString("prescription") +
@@ -367,15 +355,13 @@ public class DBhandler {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return records.toArray(new String[0]);
+        return medicalRecords.toArray(new String[0]);
     }
-
-    // ---------------------- VISIT COSTS ----------------------
 
     public void setVisitCost(String spec, int cost) {
         String sql = "UPDATE visit_costs SET cost = ? WHERE specialization = ?";
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, cost);
             stmt.setString(2, spec);
             stmt.executeUpdate();
@@ -393,8 +379,8 @@ public class DBhandler {
                 "GROUP BY p.medicalNbr, p.f_name, p.l_name " +
                 "ORDER BY total_cost DESC";
 
-        try (Connection conn = getConnection();
-             Statement stmt = conn.createStatement();
+        try (Connection connection = getConnection();
+             Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 System.out.println("Patient: " + rs.getString("f_name") + " " + rs.getString("l_name") +
