@@ -89,8 +89,14 @@ public class Controller {
     }
 
     public boolean checkDetails(String[] details, int userType) {
-        // Assuming the authentication logic is implemented in the database handler
-        return true;
+        try {
+            int id = Integer.parseInt(details[0]);
+            String password = details[1];
+            return database.authenticateUser(id, password, userType);
+        } catch (Exception e) {
+            System.out.println("Login failed: " + e.getMessage());
+            return false;
+        }
     }
 
     public void displayAllPatients(String[] patientArray) {
