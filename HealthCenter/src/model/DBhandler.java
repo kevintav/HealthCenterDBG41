@@ -86,14 +86,21 @@ public class DBhandler {
         }
     }
 
-    public void addDoctor(int id, String fullName, String spec) {
-        String sql = "INSERT INTO doctor (id, fullname, spec) VALUES (?, ?, ?)";
+    public void addDoctor(int id, String fullName, String spec, int phone) {
+        String sql = "INSERT INTO doctor (id, fullname, spec, phone) VALUES (?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.setString(2, fullName);
             stmt.setString(3, spec);
+            stmt.setInt(4, phone);
             stmt.executeUpdate();
+
+            String[] defaultTime = {"F", "F", "F", "F"};
+            for (int day = 1; day <= 5; day++) {
+                setAvailability(id, String.valueOf(day), defaultTime[0], defaultTime[1], defaultTime[2], defaultTime[3]);
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -190,39 +197,56 @@ public class DBhandler {
     }
 
     public boolean setAvailability(int docId, String day, String t1, String t2, String t3, String t4) {
-        String check = "SELECT COUNT(*) FROM availability WHERE docId = ? AND weekDay = ?";
+        String checkAppoint = "SELECT COUNT(*) FROM availability WHERE docId = ? AND weekDay = ?";
+        String checkAvailable = "SELECT COUNT(*) FROM availability WHERE docId = ? AND weekDay = ?";
         String insert = "INSERT INTO availability (docId, weekDay, time1, time2, time3, time4) VALUES (?, ?, ?, ?, ?, ?)";
         String update = "UPDATE availability SET time1=?, time2=?, time3=?, time4=? WHERE docId=? AND weekDay=?";
 
         try (Connection conn = getConnection();
-             PreparedStatement checkStmt = conn.prepareStatement(check)) {
+             PreparedStatement appStmt = conn.prepareStatement(checkAppoint)) {
 
-            checkStmt.setInt(1, docId);
-            checkStmt.setString(2, day);
-            ResultSet rs = checkStmt.executeQuery();
-            rs.next();
-            if (rs.getInt(1) > 0) {
-                try (PreparedStatement updateStmt = conn.prepareStatement(update)) {
-                    updateStmt.setString(1, t1);
-                    updateStmt.setString(2, t2);
-                    updateStmt.setString(3, t3);
-                    updateStmt.setString(4, t4);
-                    updateStmt.setInt(5, docId);
-                    updateStmt.setString(6, day);
-                    updateStmt.executeUpdate();
-                }
-            } else {
-                try (PreparedStatement insertStmt = conn.prepareStatement(insert)) {
-                    insertStmt.setInt(1, docId);
-                    insertStmt.setString(2, day);
-                    insertStmt.setString(3, t1);
-                    insertStmt.setString(4, t2);
-                    insertStmt.setString(5, t3);
-                    insertStmt.setString(6, t4);
-                    insertStmt.executeUpdate();
-                }
+            appStmt.setInt(1, docId);
+            appStmt.setInt(2, Integer.parseInt(day));
+            ResultSet appRS = appStmt.executeQuery();
+            appRS.next();
+            if (appRS.getInt(1) > 0) {
+                System.out.println("Cannot update availability: appointments exist for this day.");
+                return false;
             }
-            return true;
+
+            // Check if availability already exists
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkAvailable)) {
+                checkStmt.setInt(1, docId);
+                checkStmt.setString(2, day);
+                ResultSet rs = checkStmt.executeQuery();
+                rs.next();
+
+                if (rs.getInt(1) > 0) {
+                    // Update existing availability
+                    try (PreparedStatement updateStmt = conn.prepareStatement(update)) {
+                        updateStmt.setString(1, t1);
+                        updateStmt.setString(2, t2);
+                        updateStmt.setString(3, t3);
+                        updateStmt.setString(4, t4);
+                        updateStmt.setInt(5, docId);
+                        updateStmt.setString(6, day);
+                        updateStmt.executeUpdate();
+                    }
+                } else {
+                    // Insert new availability
+                    try (PreparedStatement insertStmt = conn.prepareStatement(insert)) {
+                        insertStmt.setInt(1, docId);
+                        insertStmt.setString(2, day);
+                        insertStmt.setString(3, t1);
+                        insertStmt.setString(4, t2);
+                        insertStmt.setString(5, t3);
+                        insertStmt.setString(6, t4);
+                        insertStmt.executeUpdate();
+                    }
+                }
+                return true;
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -263,20 +287,21 @@ public class DBhandler {
         };
     }
 
-    public void bookAppointment(int medNbr, int docId, LocalDate date, String time) {
-        if (!LocalDate.now().getDayOfWeek().name().equals("FRIDAY")) {
+    public void bookAppointment(int medNbr, int docId, LocalDate date, Time time) {
+        // boolean test to remove friday check
+        boolean test = true;
+        if (!test && !LocalDate.now().getDayOfWeek().name().equals("FRIDAY")) {
             System.out.println("Appointments can only be booked on Fridays.");
             return;
         }
 
-        String sql = "INSERT INTO appointment (medicalNbr, doctorId, appointmentDate, appointmentTime, bookingTime) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO appointment (medicalNbr, doctorId, appointmentDate, appointmentTime) VALUES (?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, medNbr);
             stmt.setInt(2, docId);
             stmt.setDate(3, Date.valueOf(date));
-            stmt.setString(4, time);
-            stmt.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            stmt.setTime(4, time);
             stmt.executeUpdate();
             System.out.println("Appointment booked.");
         } catch (SQLException e) {
@@ -318,6 +343,23 @@ public class DBhandler {
             e.printStackTrace();
         }
         return patients.toArray(new String[0]);
+    }
+
+    public void getDoctorsBySpec(String spec) {
+        String sql = "SELECT d.id, d.fullname, d.spec, v.cost FROM doctor d JOIN visit_costs v ON d.spec = v.specialization WHERE d.spec = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, spec);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                System.out.println("Doctor ID: " + rs.getInt("id") +
+                        ", Name: " + rs.getString("fullname") +
+                        ", Specialization: " + rs.getString("spec") +
+                        ", Cost: " + rs.getInt("cost") + " SEK");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 

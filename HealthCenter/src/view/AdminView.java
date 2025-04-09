@@ -53,7 +53,9 @@ public class AdminView {
         int id = Integer.parseInt(scanner.nextLine());
         System.out.print("Specialization (e.g., Pe, Or): ");
         String spec = scanner.nextLine();
-        controller.addDoctor(name, id, spec);
+        System.out.print("Doctor Phone: ");
+        int phone = scanner.nextInt();
+        controller.addDoctor(name, id, spec, phone); // modify method
         mainView.showMessage("Doctor added.");
     }
 

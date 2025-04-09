@@ -3,7 +3,9 @@ package controller;
 import model.DBhandler;
 import view.MainView;
 
+import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class Controller {
     private final MainView mainView;
@@ -96,8 +98,8 @@ public class Controller {
         return database.doesDoctorExist(id);
     }
 
-    public void addDoctor(String name, int id, String spec) {
-        database.addDoctor(id, name, spec);
+    public void addDoctor(String name, int id, String spec, int phone) {
+        database.addDoctor(id, name, spec, phone);
     }
 
     public void deleteDoctor(int id) {
@@ -136,8 +138,8 @@ public class Controller {
         return database.getAvailability(docId);
     }
 
-    public void bookAppointment(int medicalNbr, int docId, LocalDate date, String time) {
-        database.bookAppointment(medicalNbr, docId, date, time);
+    public void bookAppointment(int medNbr, int docId, LocalDate date, LocalTime time) {
+        database.bookAppointment(medNbr, docId, date, Time.valueOf(time));
     }
 
     public String[] getAppointmentsByDoctor(int docId) {
@@ -162,6 +164,10 @@ public class Controller {
 
     public void showTotalVisitCosts() {
         database.getTotalVisitCost();
+    }
+
+    public void showDoctorsBySpec(String spec) {
+        database.getDoctorsBySpec(spec);
     }
 
     public String[] getLoginInformation() {

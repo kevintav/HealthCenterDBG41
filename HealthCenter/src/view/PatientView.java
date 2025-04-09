@@ -3,6 +3,7 @@ package view;
 import controller.Controller;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
@@ -57,7 +58,7 @@ public class PatientView {
     private void searchDoctors() {
         System.out.print("Enter specialization code (e.g., Pe, Or): ");
         String spec = scanner.nextLine();
-        controller.showAllDoctors();
+        controller.showDoctorsBySpec(spec);
     }
 
     private void viewDoctorAvailability() {
@@ -71,16 +72,24 @@ public class PatientView {
         int docId = Integer.parseInt(scanner.nextLine());
         System.out.print("Enter appointment date (YYYY-MM-DD): ");
         LocalDate date;
+
         try {
             date = LocalDate.parse(scanner.nextLine());
         } catch (DateTimeParseException e) {
             mainView.showMessage("Invalid date.");
             return;
         }
-        System.out.print("Enter appointment time (e.g., 09:00): ");
-        String time = scanner.nextLine();
+        System.out.print("Enter appointment time (HH:mm or HH:mm:ss): ");
+        String timeInput = scanner.nextLine().trim();
+        LocalTime parsedTime;
 
-        controller.bookAppointment(Integer.parseInt(controller.getLoginInformation()[0]), docId, date, time);
+        try {
+            parsedTime = LocalTime.parse(timeInput);  // This will fail if input is invalid
+        } catch (DateTimeParseException e) {
+            mainView.showMessage("Invalid time format. Please enter as HH:mm or HH:mm:ss.");
+            return;
+        }
+        controller.bookAppointment(Integer.parseInt(controller.getLoginInformation()[0]), docId, date, parsedTime);
     }
 
     private void viewMyMedicalRecords() {
