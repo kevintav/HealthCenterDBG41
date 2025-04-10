@@ -59,13 +59,13 @@ public class DBhandler {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 info[0] = String.valueOf(rs.getInt("medicalNbr"));
-                info[1] = rs.getString("f_name") + " " + rs.getString("l_name");
-                info[2] = rs.getString("tel_nr");
-                info[3] = rs.getString("address");
-                info[4] = rs.getString("gender");
-                info[5] = rs.getString("birthdate");
-                info[6] = rs.getString("registry");
-                info[7] = rs.getString("pw");
+                info[1] = "Name: "+rs.getString("f_name") + " " + rs.getString("l_name");
+                info[2] = "Telephone: " +rs.getString("tel_nr");
+                info[3] = "Address: "+rs.getString("address");
+                info[4] = "Gender: "+rs.getString("gender");
+                info[5] = "Date of birth: "+rs.getString("birthdate");
+                info[6] = "Registry Date: "+rs.getString("registry");
+                info[7] = "Password" + rs.getString("pw");
             }
         } catch (SQLException e) {
             e.printStackTrace();
