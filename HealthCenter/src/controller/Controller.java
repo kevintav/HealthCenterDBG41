@@ -149,7 +149,7 @@ public class Controller {
     }
 
     public int fetchPatientId(String firstName, String lastName, int phoneNumber, LocalDate birth) {
-        return database.getPatientId(firstName, lastName, phoneNumber, birth);
+        return database.getPatientIdBy(firstName, lastName, phoneNumber, birth);
     }
 
     public String[] getMedicalRecordsForLoggedInPatient() {

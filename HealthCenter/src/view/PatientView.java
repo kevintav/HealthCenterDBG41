@@ -30,13 +30,17 @@ public class PatientView {
 
     public void handlePatientSelection() {
         boolean keepRunning = true;
+        Scanner scan = new Scanner(System.in);
         while (keepRunning) {
             showMenu();
             int choice = mainView.handleInputSelection(1, 6);
             switch (choice) {
                 case 1 -> viewOrEditPersonalInfo();
                 case 2 -> searchDoctors();
-                case 3 -> viewDoctorAvailability();
+                case 3 -> {
+                    mainView.showMessage("Enter Doctor ID: ");
+                    viewDoctorAvailability(scan.nextInt());
+                }
                 case 4 -> bookAppointment();
                 case 5 -> viewMyMedicalRecords();
                 case 6 -> {
@@ -69,15 +73,15 @@ public class PatientView {
         controller.showDoctorsBySpec(spec);
     }
 
-    private void viewDoctorAvailability() {
-        System.out.print("Enter Doctor ID to view availability: ");
-        int docId = Integer.parseInt(scanner.nextLine());
+    private void viewDoctorAvailability(int docId) {
         mainView.printAvailableTimes(controller.getDoctorAvailability(docId));
     }
 
     private void bookAppointment() {
+        controller.showAllDoctors();
         System.out.print("Enter Doctor ID: ");
         int docId = Integer.parseInt(scanner.nextLine());
+        viewDoctorAvailability(docId);
         System.out.print("Enter appointment date (YYYY-MM-DD): ");
         LocalDate date;
 

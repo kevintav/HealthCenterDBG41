@@ -153,7 +153,6 @@ public class MainView {
     }
 
     public void showPatientMenu() {
-        patientView.showMenu();
         patientView.handlePatientSelection();
     }
 

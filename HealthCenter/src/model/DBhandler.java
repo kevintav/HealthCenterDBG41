@@ -2,6 +2,7 @@ package model;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +73,7 @@ public class DBhandler {
         return info;
     }
 
-    public int getPatientId(String firstName, String lastName, int phoneNumber, LocalDate birthDate) {
+    public int getPatientIdBy(String firstName, String lastName, int phoneNumber, LocalDate birthDate) {
         String sql = "SELECT medicalNbr FROM patient WHERE f_name = ? AND l_name = ? AND tel_nr = ? AND birthdate = ?";
 
         try (Connection conn = getConnection();
@@ -307,23 +308,50 @@ public class DBhandler {
         };
     }
 
-    public void bookAppointment(int medNbr, int docId, LocalDate date, Time time) {
-        // boolean test to remove friday check
+    public void bookAppointment(int medNbr, int docId, LocalDate date, LocalTime time) {
+        // Check Friday rule (if enabled)
         boolean test = true;
         if (!test && !LocalDate.now().getDayOfWeek().name().equals("FRIDAY")) {
             System.out.println("Appointments can only be booked on Fridays.");
             return;
         }
 
-        String sql = "INSERT INTO appointment (medicalNbr, doctorId, appointmentDate, appointmentTime) VALUES (?, ?, ?, ?)";
+        String insertSql = "INSERT INTO appointment (medicalNbr, doctorId, appointmentDate, appointmentTime) VALUES (?, ?, ?, ?)";
+        String updateAvailabilitySql = "UPDATE availability SET %s = 'B' WHERE docId = ? AND weekDay = ?";
+
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, medNbr);
-            stmt.setInt(2, docId);
-            stmt.setDate(3, Date.valueOf(date));
-            stmt.setTime(4, time);
-            stmt.executeUpdate();
-            System.out.println("Appointment booked.");
+             PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
+
+            insertStmt.setInt(1, medNbr);
+            insertStmt.setInt(2, docId);
+            insertStmt.setDate(3, Date.valueOf(date));
+            insertStmt.setTime(4, Time.valueOf(time));
+            insertStmt.executeUpdate();
+
+            // Determine the time slot column (time1–time4)
+            String timeStr = time.toString();
+            String timeColumn = switch (timeStr) {
+                case "09:00:00" -> "time1";
+                case "09:30:00" -> "time2";
+                case "10:00:00" -> "time3";
+                case "10:30:00" -> "time4";
+                default -> null;
+            };
+
+            if (timeColumn != null) {
+                // Get the weekday number (1=Monday ... 7=Sunday)
+                int weekday = date.getDayOfWeek().getValue();
+                String formattedSql = String.format(updateAvailabilitySql, timeColumn);
+
+                try (PreparedStatement updateStmt = conn.prepareStatement(formattedSql)) {
+                    updateStmt.setInt(1, docId);
+                    updateStmt.setString(2, String.valueOf(weekday)); // assuming weekDay is stored as VARCHAR
+                    updateStmt.executeUpdate();
+                }
+            }
+
+            System.out.println("Appointment booked and availability updated.");
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
