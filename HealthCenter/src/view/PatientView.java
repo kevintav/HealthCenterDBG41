@@ -12,6 +12,7 @@ public class PatientView {
     private final MainView mainView;
     private final Controller controller;
 
+
     public PatientView(MainView mainView, Controller controller) {
         this.mainView = mainView;
         this.controller = controller;
@@ -28,14 +29,21 @@ public class PatientView {
     }
 
     public void handleSelection() {
-        int choice = mainView.handleSelection(1, 6);
-        switch (choice) {
-            case 1 -> viewOrEditPersonalInfo();
-            case 2 -> searchDoctors();
-            case 3 -> viewDoctorAvailability();
-            case 4 -> bookAppointment();
-            case 5 -> viewMyMedicalRecords();
-            case 6 -> controller.logOut();
+        boolean keepRunning = true;
+        while (keepRunning) {
+            showMenu();
+            int choice = mainView.handleSelection(1, 6);
+            switch (choice) {
+                case 1 -> viewOrEditPersonalInfo();
+                case 2 -> searchDoctors();
+                case 3 -> viewDoctorAvailability();
+                case 4 -> bookAppointment();
+                case 5 -> viewMyMedicalRecords();
+                case 6 -> {
+                    controller.logOut();
+                    keepRunning = false;
+                }
+            }
         }
     }
 
