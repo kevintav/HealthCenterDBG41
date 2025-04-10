@@ -88,8 +88,6 @@ public class Controller {
         System.exit(0);
     }
 
-    // ===== Getters and Logic Delegation =====
-
     public void addPatient(String f, String l, String gender, String address, int phone, LocalDate dob, String pw) {
         database.addPatient(f, l, gender, address, phone, dob, pw);
     }
