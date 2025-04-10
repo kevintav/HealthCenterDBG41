@@ -65,7 +65,7 @@ public class DBhandler {
                 info[4] = "Gender: "+rs.getString("gender");
                 info[5] = "Date of birth: "+rs.getString("birthdate");
                 info[6] = "Registry Date: "+rs.getString("registry");
-                info[7] = "Password" + rs.getString("pw");
+                info[7] = "Password: " + rs.getString("pw");
             }
         } catch (SQLException e) {
             e.printStackTrace();
