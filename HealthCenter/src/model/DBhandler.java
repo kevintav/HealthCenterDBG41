@@ -72,6 +72,27 @@ public class DBhandler {
         return info;
     }
 
+    public int getPatientId(String firstName, String lastName, int phoneNumber, LocalDate birthDate) {
+        String sql = "SELECT medicalNbr FROM patient WHERE f_name = ? AND l_name = ? AND tel_nr = ? AND birthdate = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, firstName);
+            stmt.setString(2, lastName);
+            stmt.setInt(3, phoneNumber);
+            stmt.setDate(4, Date.valueOf(birthDate));
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("medicalNbr");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Not found
+    }
+
     public void getAllPatients() {
         String sql = "SELECT * FROM patient ORDER BY medicalNbr";
         try (Connection conn = getConnection();

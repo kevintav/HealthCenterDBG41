@@ -88,8 +88,8 @@ public class Controller {
         System.exit(0);
     }
 
-    public void addPatient(String f, String l, String gender, String address, int phone, LocalDate dob, String pw) {
-        database.addPatient(f, l, gender, address, phone, dob, pw);
+    public void addPatient(String f, String l, String gender, String address, int phone, LocalDate birth, String pw) {
+        database.addPatient(f, l, gender, address, phone, birth, pw);
     }
 
     public boolean doctorExists(int id) {
@@ -146,6 +146,10 @@ public class Controller {
 
     public String[] getPatientsOfLoggedInDoctor() {
         return database.getPatientsOfDoctor(Integer.parseInt(loginInfo[0]));
+    }
+
+    public int fetchPatientId(String firstName, String lastName, int phoneNumber, LocalDate birth) {
+        return database.getPatientId(firstName, lastName, phoneNumber, birth);
     }
 
     public String[] getMedicalRecordsForLoggedInPatient() {

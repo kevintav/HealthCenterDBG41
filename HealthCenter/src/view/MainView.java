@@ -94,7 +94,12 @@ public class MainView {
             }
         }
         controller.addPatient(fName, lName, gender, address, phone, birthDate, pw);
-        showMessage("Patient registered successfully.");
+        int id = controller.fetchPatientId(fName, lName, phone, birthDate);
+        if (id > 0) {
+            showMessage("You have registered succesfully. Your new ID is: "+id);
+        } else {
+            showMessage("Registration failed");
+        }
     }
 
     public void inputAvailability() {
