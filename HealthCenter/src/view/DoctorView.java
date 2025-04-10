@@ -24,7 +24,7 @@ public class DoctorView {
     }
 
     public void handleSelection() {
-        int choice = mainView.handleSelection(1, 5);
+        int choice = mainView.handleInputSelection(1, 5);
         switch (choice) {
             case 1:
                 showMessage("Set your availability");

@@ -28,11 +28,11 @@ public class PatientView {
         mainView.showMessage("6. Logout");
     }
 
-    public void handleSelection() {
+    public void handlePatientSelection() {
         boolean keepRunning = true;
         while (keepRunning) {
             showMenu();
-            int choice = mainView.handleSelection(1, 6);
+            int choice = mainView.handleInputSelection(1, 6);
             switch (choice) {
                 case 1 -> viewOrEditPersonalInfo();
                 case 2 -> searchDoctors();

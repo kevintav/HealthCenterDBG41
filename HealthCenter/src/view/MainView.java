@@ -28,7 +28,7 @@ public class MainView {
         showMessage("2. Doctor Login");
         showMessage("3. Admin Login");
         showMessage("4. Exit");
-        controller.handleMainMenuSelection(handleSelection(1, 4));
+        controller.handleMainMenuSelection(handleInputSelection(1, 4));
     }
 
     public void loginSignUpMenu() {
@@ -138,7 +138,7 @@ public class MainView {
         return (slot == null || slot.equals("B")) ? "-" : "F";
     }
 
-    public int handleSelection(int min, int max) {
+    public int handleInputSelection(int min, int max) {
         int choice;
         while (true) {
             try {
@@ -154,7 +154,7 @@ public class MainView {
 
     public void showPatientMenu() {
         patientView.showMenu();
-        patientView.handleSelection();
+        patientView.handlePatientSelection();
     }
 
     public void showDocMenu() {

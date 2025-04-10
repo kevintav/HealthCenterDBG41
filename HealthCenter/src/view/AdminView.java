@@ -29,7 +29,7 @@ public class AdminView {
     }
 
     public void handleSelection() {
-        int choice = mainView.handleSelection(1, 9);
+        int choice = mainView.handleInputSelection(1, 9);
         switch (choice) {
             case 1 -> addDoctor();
             case 2 -> deleteDoctor();

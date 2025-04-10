@@ -34,7 +34,7 @@ public class Controller {
 
     private void handlePatientAccess() {
         mainView.loginSignUpMenu();
-        int choice = mainView.handleSelection(1, 2);
+        int choice = mainView.handleInputSelection(1, 2);
 
         if (choice == 1) {
             loginInfo = mainView.loginView(1);
