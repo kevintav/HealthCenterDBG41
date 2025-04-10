@@ -3,6 +3,7 @@ package view;
 import controller.Controller;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
@@ -10,6 +11,7 @@ public class PatientView {
     private final Scanner scanner = new Scanner(System.in);
     private final MainView mainView;
     private final Controller controller;
+
 
     public PatientView(MainView mainView, Controller controller) {
         this.mainView = mainView;
@@ -26,15 +28,26 @@ public class PatientView {
         mainView.showMessage("6. Logout");
     }
 
-    public void handleSelection() {
-        int choice = mainView.handleSelection(1, 6);
-        switch (choice) {
-            case 1 -> viewOrEditPersonalInfo();
-            case 2 -> searchDoctors();
-            case 3 -> viewDoctorAvailability();
-            case 4 -> bookAppointment();
-            case 5 -> viewMyMedicalRecords();
-            case 6 -> controller.logOut();
+    public void handlePatientSelection() {
+        boolean keepRunning = true;
+        Scanner scan = new Scanner(System.in);
+        while (keepRunning) {
+            showMenu();
+            int choice = mainView.handleInputSelection(1, 6);
+            switch (choice) {
+                case 1 -> viewOrEditPersonalInfo();
+                case 2 -> searchDoctors();
+                case 3 -> {
+                    mainView.showMessage("Enter Doctor ID: ");
+                    viewDoctorAvailability(scan.nextInt());
+                }
+                case 4 -> bookAppointment();
+                case 5 -> viewMyMedicalRecords();
+                case 6 -> {
+                    controller.logOut();
+                    keepRunning = false;
+                }
+            }
         }
     }
 
@@ -57,30 +70,38 @@ public class PatientView {
     private void searchDoctors() {
         System.out.print("Enter specialization code (e.g., Pe, Or): ");
         String spec = scanner.nextLine();
-        controller.showAllDoctors();
+        controller.showDoctorsBySpec(spec);
     }
 
-    private void viewDoctorAvailability() {
-        System.out.print("Enter Doctor ID to view availability: ");
-        int docId = Integer.parseInt(scanner.nextLine());
+    private void viewDoctorAvailability(int docId) {
         mainView.printAvailableTimes(controller.getDoctorAvailability(docId));
     }
 
     private void bookAppointment() {
+        controller.showAllDoctors();
         System.out.print("Enter Doctor ID: ");
         int docId = Integer.parseInt(scanner.nextLine());
+        viewDoctorAvailability(docId);
         System.out.print("Enter appointment date (YYYY-MM-DD): ");
         LocalDate date;
+
         try {
             date = LocalDate.parse(scanner.nextLine());
         } catch (DateTimeParseException e) {
             mainView.showMessage("Invalid date.");
             return;
         }
-        System.out.print("Enter appointment time (e.g., 09:00): ");
-        String time = scanner.nextLine();
+        System.out.print("Enter appointment time (HH:mm or HH:mm:ss): ");
+        String timeInput = scanner.nextLine().trim();
+        LocalTime parsedTime;
 
-        controller.bookAppointment(Integer.parseInt(controller.getLoginInformation()[0]), docId, date, time);
+        try {
+            parsedTime = LocalTime.parse(timeInput);  // This will fail if input is invalid
+        } catch (DateTimeParseException e) {
+            mainView.showMessage("Invalid time format. Please enter as HH:mm or HH:mm:ss.");
+            return;
+        }
+        controller.bookAppointment(Integer.parseInt(controller.getLoginInformation()[0]), docId, date, parsedTime);
     }
 
     private void viewMyMedicalRecords() {

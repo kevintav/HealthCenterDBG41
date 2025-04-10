@@ -29,7 +29,7 @@ public class AdminView {
     }
 
     public void handleSelection() {
-        int choice = mainView.handleSelection(1, 9);
+        int choice = mainView.handleInputSelection(1, 9);
         switch (choice) {
             case 1 -> addDoctor();
             case 2 -> deleteDoctor();
@@ -53,7 +53,9 @@ public class AdminView {
         int id = Integer.parseInt(scanner.nextLine());
         System.out.print("Specialization (e.g., Pe, Or): ");
         String spec = scanner.nextLine();
-        controller.addDoctor(name, id, spec);
+        System.out.print("Doctor Phone: ");
+        int phone = scanner.nextInt();
+        controller.addDoctor(name, id, spec, phone); // modify method
         mainView.showMessage("Doctor added.");
     }
 

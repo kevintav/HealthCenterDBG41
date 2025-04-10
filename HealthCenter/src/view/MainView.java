@@ -28,7 +28,7 @@ public class MainView {
         showMessage("2. Doctor Login");
         showMessage("3. Admin Login");
         showMessage("4. Exit");
-        controller.handleMainMenuSelection(handleSelection(1, 4));
+        controller.handleMainMenuSelection(handleInputSelection(1, 4));
     }
 
     public void loginSignUpMenu() {
@@ -94,7 +94,12 @@ public class MainView {
             }
         }
         controller.addPatient(fName, lName, gender, address, phone, birthDate, pw);
-        showMessage("Patient registered successfully.");
+        int id = controller.fetchPatientId(fName, lName, phone, birthDate);
+        if (id > 0) {
+            showMessage("You have registered succesfully. Your new ID is: "+id);
+        } else {
+            showMessage("Registration failed");
+        }
     }
 
     public void inputAvailability() {
@@ -133,7 +138,7 @@ public class MainView {
         return (slot == null || slot.equals("B")) ? "-" : "F";
     }
 
-    public int handleSelection(int min, int max) {
+    public int handleInputSelection(int min, int max) {
         int choice;
         while (true) {
             try {
@@ -148,8 +153,7 @@ public class MainView {
     }
 
     public void showPatientMenu() {
-        patientView.showMenu();
-        patientView.handleSelection();
+        patientView.handlePatientSelection();
     }
 
     public void showDocMenu() {

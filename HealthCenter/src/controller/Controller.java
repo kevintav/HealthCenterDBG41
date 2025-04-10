@@ -3,7 +3,9 @@ package controller;
 import model.DBhandler;
 import view.MainView;
 
+import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class Controller {
     private final MainView mainView;
@@ -32,7 +34,7 @@ public class Controller {
 
     private void handlePatientAccess() {
         mainView.loginSignUpMenu();
-        int choice = mainView.handleSelection(1, 2);
+        int choice = mainView.handleInputSelection(1, 2);
 
         if (choice == 1) {
             loginInfo = mainView.loginView(1);
@@ -86,18 +88,16 @@ public class Controller {
         System.exit(0);
     }
 
-    // ===== Getters and Logic Delegation =====
-
-    public void addPatient(String f, String l, String gender, String address, int phone, LocalDate dob, String pw) {
-        database.addPatient(f, l, gender, address, phone, dob, pw);
+    public void addPatient(String f, String l, String gender, String address, int phone, LocalDate birth, String pw) {
+        database.addPatient(f, l, gender, address, phone, birth, pw);
     }
 
     public boolean doctorExists(int id) {
         return database.doesDoctorExist(id);
     }
 
-    public void addDoctor(String name, int id, String spec) {
-        database.addDoctor(id, name, spec);
+    public void addDoctor(String name, int id, String spec, int phone) {
+        database.addDoctor(id, name, spec, phone);
     }
 
     public void deleteDoctor(int id) {
@@ -136,8 +136,8 @@ public class Controller {
         return database.getAvailability(docId);
     }
 
-    public void bookAppointment(int medicalNbr, int docId, LocalDate date, String time) {
-        database.bookAppointment(medicalNbr, docId, date, time);
+    public void bookAppointment(int medNbr, int docId, LocalDate date, LocalTime time) {
+        database.bookAppointment(medNbr, docId, date, time);
     }
 
     public String[] getAppointmentsByDoctor(int docId) {
@@ -146,6 +146,10 @@ public class Controller {
 
     public String[] getPatientsOfLoggedInDoctor() {
         return database.getPatientsOfDoctor(Integer.parseInt(loginInfo[0]));
+    }
+
+    public int fetchPatientId(String firstName, String lastName, int phoneNumber, LocalDate birth) {
+        return database.getPatientIdBy(firstName, lastName, phoneNumber, birth);
     }
 
     public String[] getMedicalRecordsForLoggedInPatient() {
@@ -162,6 +166,10 @@ public class Controller {
 
     public void showTotalVisitCosts() {
         database.getTotalVisitCost();
+    }
+
+    public void showDoctorsBySpec(String spec) {
+        database.getDoctorsBySpec(spec);
     }
 
     public String[] getLoginInformation() {
