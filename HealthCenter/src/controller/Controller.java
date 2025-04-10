@@ -137,7 +137,7 @@ public class Controller {
     }
 
     public void bookAppointment(int medNbr, int docId, LocalDate date, LocalTime time) {
-        database.bookAppointment(medNbr, docId, date, Time.valueOf(time));
+        database.bookAppointment(medNbr, docId, date, time);
     }
 
     public String[] getAppointmentsByDoctor(int docId) {
